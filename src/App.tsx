@@ -3,6 +3,9 @@ import theme from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import Landing from "./pages/Landing";
 import AdminLogin from "./pages/AdminLogin";
+import Admin from "./pages/Admin";
+import AdminLayout from "./components/AdminLayout";
+import BusinessUnit from "./pages/BusinessUnit";
 
 const router = createBrowserRouter([
   {
@@ -10,8 +13,22 @@ const router = createBrowserRouter([
     element: <Landing />,
   },
   {
-    path: "admin-login",
+    path: "/admin-login",
     element: <AdminLogin />,
+  },
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "/admin",
+        element: <Admin />,
+      },
+      {
+        path: "/admin/bu",
+        element: <BusinessUnit />,
+      },
+    ],
   },
 ]);
 
