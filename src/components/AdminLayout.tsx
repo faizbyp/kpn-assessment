@@ -11,6 +11,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import { AppBar, IconButton, ListSubheader, Toolbar, Typography } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
+import UserMenu from "./UserMenu";
 
 const items = [
   {
@@ -34,7 +35,11 @@ export default function AdminLayout() {
       {items &&
         items.map((menuGroup, index) => (
           <List
-            subheader={menuGroup.subheader && <ListSubheader>{menuGroup.subheader}</ListSubheader>}
+            subheader={
+              menuGroup.subheader && (
+                <ListSubheader color="primary">{menuGroup.subheader}</ListSubheader>
+              )
+            }
             key={index}
           >
             {menuGroup.items.map((item) => (
@@ -53,19 +58,22 @@ export default function AdminLayout() {
   return (
     <div>
       <AppBar position="fixed">
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={toggleDrawer(true)}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            KPN Assessment
-          </Typography>
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={toggleDrawer(true)}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              KPN Assessment
+            </Typography>
+          </Box>
+          <UserMenu />
         </Toolbar>
       </AppBar>
       <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
