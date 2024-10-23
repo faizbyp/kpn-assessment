@@ -2,6 +2,7 @@ import { Typography } from "@mui/material";
 import StandardTable from "../components/StandardTable";
 import { useMemo } from "react";
 import useFetch from "../hooks/useFetch";
+import { TableSkeleton } from "../components/Skeleton";
 
 const BusinessUnit = () => {
   const { data: bu } = useFetch<any>("/bu");
@@ -33,7 +34,11 @@ const BusinessUnit = () => {
       <Typography variant="h1" color="primary">
         Business Unit
       </Typography>
-      <StandardTable columns={columns} data={bu?.data} />
+      {bu ? (
+        <StandardTable columns={columns} data={bu?.data} />
+      ) : (
+        <TableSkeleton column={4} row={2} small />
+      )}
     </>
   );
 };

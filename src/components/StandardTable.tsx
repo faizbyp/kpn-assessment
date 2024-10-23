@@ -15,8 +15,6 @@ import {
   TableRow,
   Paper,
   Box,
-  Skeleton,
-  Typography,
 } from "@mui/material";
 
 interface TableProps<T> {
@@ -77,11 +75,7 @@ const StandardTable = memo(function StandardTable<T>({
                 <TableRow>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {data ? (
-                        flexRender(cell.column.columnDef.cell, cell.getContext())
-                      ) : (
-                        <Typography>Loading</Typography>
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>

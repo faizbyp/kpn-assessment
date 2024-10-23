@@ -2,6 +2,7 @@ import { Box, Button, Container, Typography } from "@mui/material";
 import TextFieldCtrl from "../components/forms/TextField";
 import { useForm } from "react-hook-form";
 import { PasswordWithEye } from "../components/forms/PasswordWithEye";
+import { useNavigate } from "react-router-dom";
 
 interface LoginValues {
   username: string;
@@ -9,6 +10,7 @@ interface LoginValues {
 }
 
 const AdminLogin = () => {
+  const navigate = useNavigate();
   const { control, handleSubmit } = useForm<LoginValues>({
     defaultValues: {
       username: "",
@@ -18,6 +20,7 @@ const AdminLogin = () => {
 
   const onLogin = (values: LoginValues) => {
     console.log(values);
+    navigate("/admin");
   };
 
   return (
