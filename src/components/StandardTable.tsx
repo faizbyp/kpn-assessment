@@ -3,6 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
+  RowData,
   useReactTable,
 } from "@tanstack/react-table";
 import { Fragment, memo, ReactNode } from "react";
@@ -16,6 +17,12 @@ import {
   Paper,
   Box,
 } from "@mui/material";
+
+declare module "@tanstack/table-core" {
+  interface ColumnMeta<TData extends RowData, TValue> {
+    align?: "left" | "right" | "center" | "justify";
+  }
+}
 
 interface TableProps<T> {
   data: T[] | null;
@@ -60,7 +67,11 @@ const StandardTable = memo(function StandardTable<T>({
                 }}
               >
                 {headerGroup.headers.map((header) => (
-                  <TableCell key={header.id} colSpan={header.colSpan}>
+                  <TableCell
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    align={header.column.columnDef.meta?.align || "left"}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -74,7 +85,7 @@ const StandardTable = memo(function StandardTable<T>({
               <Fragment key={row.id}>
                 <TableRow>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} align={cell.column.columnDef.meta?.align || "left"}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
