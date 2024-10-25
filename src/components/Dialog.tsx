@@ -7,7 +7,7 @@ interface DialogProps {
   actions: ReactNode;
   open: boolean;
   onClose: any;
-  keepMounted: boolean;
+  keepMounted?: boolean;
   children: ReactNode;
 }
 

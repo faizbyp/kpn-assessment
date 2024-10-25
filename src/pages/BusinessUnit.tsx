@@ -7,9 +7,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useDialog from "../hooks/useDialog";
 import { snack } from "../providers/SnackbarProvider";
+import { API } from "../utils/api";
+import { useLoading } from "../providers/LoadingProvider";
 
 const BusinessUnit = () => {
-  const { data: bu } = useFetch<any>("/bu");
+  const { showLoading, hideLoading } = useLoading();
+  const { data: bu, refetch } = useFetch<any>("/bu");
   const { Dialog, showDialog, closeDialog } = useDialog();
   const columns: any = useMemo(
     () => [
@@ -34,6 +37,7 @@ const BusinessUnit = () => {
         meta: { align: "right" },
         cell: (props: any) => {
           const id = props.getValue();
+          const name = props.row.original.name;
 
           return (
             <>
@@ -47,7 +51,7 @@ const BusinessUnit = () => {
                 <EditIcon />
               </IconButton>
               <IconButton
-                onClick={() => handleOpenDelete(id)}
+                onClick={() => handleOpenDelete(id, name)}
                 aria-label="delete"
                 color="error"
                 size="small"
@@ -63,10 +67,10 @@ const BusinessUnit = () => {
     []
   );
 
-  const handleOpenDelete = (id: any) => {
+  const handleOpenDelete = (id: string, name: string) => {
     const actions = (
       <>
-        <Button onClick={closeDialog} variant="outlined">
+        <Button onClick={closeDialog} variant="outlined" color="error">
           Cancel
         </Button>
         <Button onClick={() => handleDelete(id)} variant="contained" color="error">
@@ -75,7 +79,7 @@ const BusinessUnit = () => {
       </>
     );
 
-    const children = <Typography>Are you sure you want to delete?</Typography>;
+    const children = <Typography>{`Are you sure you want to delete ${name}?`}</Typography>;
 
     showDialog("Delete Confirmation", actions, children);
   };
@@ -85,9 +89,20 @@ const BusinessUnit = () => {
     alert(`Edit ${id}`);
   };
 
-  const handleDelete = (id: string) => {
-    console.log("Delete clicked for id:", id);
-    snack.success(`ID ${id} deleted`);
+  const handleDelete = async (id: string) => {
+    showLoading();
+    try {
+      const res = await API.delete(`/bu/${id}`);
+      console.log(res);
+      refetch();
+      snack.success(res.data?.message);
+    } catch (error) {
+      console.error(error);
+      snack.error(error as string);
+    } finally {
+      closeDialog();
+      hideLoading();
+    }
   };
 
   return (

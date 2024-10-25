@@ -7,6 +7,7 @@ import Admin from "./pages/Admin";
 import AdminLayout from "./components/AdminLayout";
 import BusinessUnit from "./pages/BusinessUnit";
 import { SnackbarProvider } from "./providers/SnackbarProvider";
+import { LoadingProvider } from "./providers/LoadingProvider";
 
 const router = createBrowserRouter([
   {
@@ -36,12 +37,14 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      <SnackbarProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </SnackbarProvider>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider>
+          <LoadingProvider>
+            <CssBaseline />
+            <RouterProvider router={router} />
+          </LoadingProvider>
+        </SnackbarProvider>
+      </ThemeProvider>
     </>
   );
 }
