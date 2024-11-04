@@ -10,12 +10,35 @@ import { snack } from "../providers/SnackbarProvider";
 import { API } from "../utils/api";
 import { useLoading } from "../providers/LoadingProvider";
 import DialogComp from "@/components/Dialog";
+import { useForm } from "react-hook-form";
+import TextFieldCtrl from "@/components/forms/TextField";
+import CheckboxCtrl from "@/components/forms/Checkbox";
+import AddIcon from "@mui/icons-material/Add";
+
+interface BUValues {
+  bu_name: string;
+  bu_code: string;
+  is_active: boolean;
+}
 
 const BusinessUnit = () => {
   const { showLoading, hideLoading } = useLoading();
   const { data: bu, refetch } = useFetch<any>("/bu");
-  const [BU, setBU] = useState({ id: "", bu_name: "" });
+  const [deleteBU, setDeleteBU] = useState({ id: "", bu_name: "" });
   const { isOpen: isOpenDelete, open: openDelete, close: closeDelete } = useDialog();
+  const { isOpen: isOpenForm, open: openForm, close: closeForm } = useDialog();
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm({
+    defaultValues: {
+      bu_name: "",
+      bu_code: "",
+      is_active: true,
+    } as BUValues,
+  });
 
   const columns: any = useMemo(
     () => [
@@ -45,7 +68,9 @@ const BusinessUnit = () => {
           return (
             <>
               <IconButton
-                onClick={() => alert(id)}
+                onClick={() => {
+                  handleOpenForm(props.row.original);
+                }}
                 aria-label="edit"
                 size="small"
                 edge="end"
@@ -70,8 +95,13 @@ const BusinessUnit = () => {
     []
   );
 
+  const handleCloseForm = () => {
+    reset();
+    closeForm();
+  };
+
   const handleOpenDelete = (id: string, bu_name: string) => {
-    setBU({ id, bu_name });
+    setDeleteBU({ id, bu_name });
     openDelete();
   };
 
@@ -91,10 +121,53 @@ const BusinessUnit = () => {
     }
   };
 
+  const handleOpenForm = (data?: BUValues) => {
+    if (data) {
+      reset(
+        {
+          bu_name: data.bu_name,
+          bu_code: data.bu_code,
+          is_active: data.is_active,
+        },
+        { keepDefaultValues: true, keepDirty: true }
+      );
+    }
+    openForm();
+  };
+
+  const onCreate = async (values: BUValues) => {
+    console.log("test", values);
+    showLoading();
+    try {
+      const res = await API.post(`/bu`, values);
+      console.log(res);
+      refetch();
+      snack.success(`${res.data.message} ${res.data.bu_code}`);
+    } catch (error) {
+      console.error(error);
+      snack.error(error as string);
+    } finally {
+      handleCloseForm();
+      hideLoading();
+    }
+  };
+
+  const handleEdit = (id: string) => {
+    alert(id);
+  };
+
   return (
     <>
       <Typography variant="h1" color="primary">
         Business Unit
+        <Button
+          startIcon={<AddIcon />}
+          variant="outlined"
+          onClick={() => handleOpenForm()}
+          sx={{ ml: 2 }}
+        >
+          Create BU
+        </Button>
       </Typography>
       {bu ? (
         <StandardTable columns={columns} data={bu?.data} />
@@ -103,7 +176,7 @@ const BusinessUnit = () => {
       )}
 
       <DialogComp
-        title="Delete BU"
+        title="Delete Business Unit"
         open={isOpenDelete}
         onClose={closeDelete}
         actions={
@@ -111,13 +184,43 @@ const BusinessUnit = () => {
             <Button onClick={closeDelete} variant="outlined" color="error">
               Cancel
             </Button>
-            <Button onClick={() => handleDelete(BU.id)} variant="contained" color="error">
+            <Button onClick={() => handleDelete(deleteBU.id)} variant="contained" color="error">
               Delete
             </Button>
           </>
         }
       >
-        <Typography>{`Are you sure you want to delete ${BU.bu_name}?`}</Typography>
+        <Typography>{`Are you sure you want to delete ${deleteBU.bu_name}?`}</Typography>
+      </DialogComp>
+
+      <DialogComp
+        title="Create Business Unit"
+        open={isOpenForm}
+        onClose={handleCloseForm}
+        actions={
+          <>
+            <Button onClick={handleCloseForm} variant="outlined">
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit(onCreate)} variant="contained" disabled={!isDirty}>
+              Create
+            </Button>
+          </>
+        }
+      >
+        <TextFieldCtrl
+          control={control}
+          label="BU Name"
+          name="bu_name"
+          rules={{ required: "Field required" }}
+        />
+        <TextFieldCtrl
+          control={control}
+          label="BU Code"
+          name="bu_code"
+          rules={{ required: "Field required" }}
+        />
+        <CheckboxCtrl name="is_active" control={control} label="Active" />
       </DialogComp>
     </>
   );
