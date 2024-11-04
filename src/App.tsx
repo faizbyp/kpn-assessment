@@ -5,15 +5,16 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 // import Landing from "./pages/Landing";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
-import AdminLayout from "./components/AdminLayout";
-import BusinessUnit from "./pages/BusinessUnit";
 import { SnackbarProvider } from "./providers/SnackbarProvider";
 import { LoadingProvider } from "./providers/LoadingProvider";
 import LoadingSuspense from "./loader/Loading";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./error/ErrorFallback";
+
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
+const AdminLayout = lazy(() => import("@/components/AdminLayout"));
+const BusinessUnit = lazy(() => import("@/pages/BusinessUnit"));
 
 const router = createBrowserRouter([
   {
