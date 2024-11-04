@@ -15,6 +15,7 @@ import AdminLayout from "./components/AdminLayout";
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
 const BusinessUnit = lazy(() => import("@/pages/BusinessUnit"));
+const TermsPP = lazy(() => import("@/pages/TermsPP"));
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
           {
             path: "bu",
             element: <BusinessUnit />,
+          },
+          {
+            path: "terms-pp",
+            element: <TermsPP />,
           },
         ],
       },

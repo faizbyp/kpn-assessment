@@ -14,7 +14,7 @@ interface TextFieldProps {
   toLowerCase?: boolean;
   numericInput?: boolean;
   multiline?: boolean;
-  rows?: string | undefined;
+  rows?: number | undefined;
   disabled?: boolean;
   endAdornment?: string | undefined;
 }

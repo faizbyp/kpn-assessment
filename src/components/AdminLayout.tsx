@@ -7,6 +7,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
 import BusinessIcon from "@mui/icons-material/Business";
+import PolicyIcon from "@mui/icons-material/Policy";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 import { AppBar, IconButton, ListSubheader, Toolbar, Typography } from "@mui/material";
@@ -19,7 +20,10 @@ const items = [
   },
   {
     subheader: "Master Data",
-    items: [{ name: "Business Unit", link: "/admin/bu", icon: <BusinessIcon /> }],
+    items: [
+      { name: "Business Unit", link: "/admin/bu", icon: <BusinessIcon /> },
+      { name: "Terms & PP", link: "/admin/terms-pp", icon: <PolicyIcon /> },
+    ],
   },
 ];
 
