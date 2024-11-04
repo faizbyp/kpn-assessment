@@ -10,10 +10,10 @@ import { LoadingProvider } from "./providers/LoadingProvider";
 import LoadingSuspense from "./loader/Loading";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./error/ErrorFallback";
+import AdminLayout from "./components/AdminLayout";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
-const AdminLayout = lazy(() => import("@/components/AdminLayout"));
 const BusinessUnit = lazy(() => import("@/pages/BusinessUnit"));
 
 const router = createBrowserRouter([
