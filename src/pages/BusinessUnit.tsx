@@ -24,7 +24,8 @@ interface BUValues {
 const BusinessUnit = () => {
   const { showLoading, hideLoading } = useLoading();
   const { data: bu, refetch } = useFetch<any>("/bu");
-  const [deleteBU, setDeleteBU] = useState({ id: "", bu_name: "" });
+  const [selectedBU, setSelectedBU] = useState({ id: "", bu_name: "" });
+  const [isEdit, setIsEdit] = useState(false);
   const { isOpen: isOpenDelete, open: openDelete, close: closeDelete } = useDialog();
   const { isOpen: isOpenForm, open: openForm, close: closeForm } = useDialog();
   const {
@@ -68,9 +69,7 @@ const BusinessUnit = () => {
           return (
             <>
               <IconButton
-                onClick={() => {
-                  handleOpenForm(props.row.original);
-                }}
+                onClick={() => handleOpenForm(props.row.original, id)}
                 aria-label="edit"
                 size="small"
                 edge="end"
@@ -101,7 +100,7 @@ const BusinessUnit = () => {
   };
 
   const handleOpenDelete = (id: string, bu_name: string) => {
-    setDeleteBU({ id, bu_name });
+    setSelectedBU({ id, bu_name });
     openDelete();
   };
 
@@ -121,8 +120,10 @@ const BusinessUnit = () => {
     }
   };
 
-  const handleOpenForm = (data?: BUValues) => {
-    if (data) {
+  const handleOpenForm = (data?: BUValues, id?: string) => {
+    if (data && id) {
+      setIsEdit(true);
+      setSelectedBU({ id: id, bu_name: data.bu_name });
       reset(
         {
           bu_name: data.bu_name,
@@ -131,6 +132,8 @@ const BusinessUnit = () => {
         },
         { keepDefaultValues: true, keepDirty: true }
       );
+    } else {
+      setIsEdit(false);
     }
     openForm();
   };
@@ -152,8 +155,21 @@ const BusinessUnit = () => {
     }
   };
 
-  const handleEdit = (id: string) => {
-    alert(id);
+  const onEdit = async (values: BUValues) => {
+    console.log(values);
+    showLoading();
+    try {
+      const res = await API.patch(`/bu/${selectedBU.id}`, values);
+      console.log(res);
+      refetch();
+      snack.success(`${res.data.message} ${res.data.bu_code}`);
+    } catch (error) {
+      console.error(error);
+      snack.error(error as string);
+    } finally {
+      handleCloseForm();
+      hideLoading();
+    }
   };
 
   return (
@@ -184,17 +200,17 @@ const BusinessUnit = () => {
             <Button onClick={closeDelete} variant="outlined" color="error">
               Cancel
             </Button>
-            <Button onClick={() => handleDelete(deleteBU.id)} variant="contained" color="error">
+            <Button onClick={() => handleDelete(selectedBU.id)} variant="contained" color="error">
               Delete
             </Button>
           </>
         }
       >
-        <Typography>{`Are you sure you want to delete ${deleteBU.bu_name}?`}</Typography>
+        <Typography>{`Are you sure you want to delete ${selectedBU.bu_name}?`}</Typography>
       </DialogComp>
 
       <DialogComp
-        title="Create Business Unit"
+        title={!isEdit ? "Create Business Unit" : "Edit Business Unit"}
         open={isOpenForm}
         onClose={handleCloseForm}
         actions={
@@ -202,8 +218,12 @@ const BusinessUnit = () => {
             <Button onClick={handleCloseForm} variant="outlined">
               Cancel
             </Button>
-            <Button onClick={handleSubmit(onCreate)} variant="contained" disabled={!isDirty}>
-              Create
+            <Button
+              onClick={!isEdit ? handleSubmit(onCreate) : handleSubmit(onEdit)}
+              variant="contained"
+              disabled={!isDirty}
+            >
+              {!isEdit ? "Create" : "Edit"}
             </Button>
           </>
         }
