@@ -11,6 +11,7 @@ import LoadingSuspense from "./loader/Loading";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./error/ErrorFallback";
 import AdminLayout from "./components/AdminLayout";
+import ShortBrief from "./pages/ShortBrief";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
           {
             path: "terms-pp",
             element: <TermsPP />,
+          },
+          {
+            path: "short-brief",
+            element: <ShortBrief />,
           },
         ],
       },

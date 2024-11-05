@@ -23,6 +23,7 @@ const items = [
     items: [
       { name: "Business Unit", link: "/admin/bu", icon: <BusinessIcon /> },
       { name: "Terms & PP", link: "/admin/terms-pp", icon: <PolicyIcon /> },
+      { name: "Short Brief", link: "/admin/short-brief", icon: <PolicyIcon /> },
     ],
   },
 ];
