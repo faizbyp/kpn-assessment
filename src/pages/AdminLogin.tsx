@@ -3,6 +3,10 @@ import TextFieldCtrl from "../components/forms/TextField";
 import { useForm } from "react-hook-form";
 import { PasswordWithEye } from "../components/forms/PasswordWithEye";
 import { useNavigate } from "react-router-dom";
+import { useLoading } from "@/providers/LoadingProvider";
+import { snack } from "@/providers/SnackbarProvider";
+import { API } from "@/utils/api";
+import { isAxiosError } from "axios";
 
 interface LoginValues {
   username: string;
@@ -11,6 +15,7 @@ interface LoginValues {
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+  const { showLoading, hideLoading } = useLoading();
   const { control, handleSubmit } = useForm<LoginValues>({
     defaultValues: {
       username: "",
@@ -18,9 +23,25 @@ const AdminLogin = () => {
     },
   });
 
-  const onLogin = (values: LoginValues) => {
+  const onLogin = async (values: LoginValues) => {
     console.log(values);
-    navigate("/admin");
+    showLoading();
+    try {
+      const res = await API.post(`/admin/login`, values);
+      console.log(res);
+      snack.success(`${res.data.message}`);
+      navigate("/admin");
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+      } else {
+        snack.error("Error, check log for details");
+      }
+      console.error(error);
+    } finally {
+      hideLoading();
+    }
   };
 
   return (
