@@ -1,5 +1,8 @@
 import TextFieldCtrl from "@/components/forms/TextField";
 import useFetch from "@/hooks/useFetch";
+import { useLoading } from "@/providers/LoadingProvider";
+import { snack } from "@/providers/SnackbarProvider";
+import { API } from "@/utils/api";
 import { Box, Button, Grid2 as Grid, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -7,18 +10,22 @@ import { useForm } from "react-hook-form";
 interface TermsPPValues {
   terms: string;
   pp: string;
+  update_date: Date;
 }
 
 const TermsPP = () => {
-  const { data: termsPP } = useFetch<any>("/terms-pp");
+  const { data: termsPP, refetch } = useFetch<any>("/terms-pp");
+  const { showLoading, hideLoading } = useLoading();
   const {
     control,
     reset,
     formState: { dirtyFields },
+    handleSubmit,
   } = useForm({
     defaultValues: {
       terms: "",
       pp: "",
+      update_date: new Date(),
     } as TermsPPValues,
   });
 
@@ -33,6 +40,44 @@ const TermsPP = () => {
     }
   }, [termsPP]);
 
+  const onUpdateTerms = async (values: TermsPPValues) => {
+    console.log(values);
+    showLoading();
+    try {
+      const res = await API.patch(`/terms-pp/terms`, {
+        name: values.terms,
+        update_date: values.update_date,
+      });
+      console.log(res);
+      refetch();
+      snack.success(`${res.data.message}`);
+    } catch (error) {
+      console.error(error);
+      snack.error(error as string);
+    } finally {
+      hideLoading();
+    }
+  };
+
+  const onUpdatePP = async (values: TermsPPValues) => {
+    console.log(values);
+    showLoading();
+    try {
+      const res = await API.patch(`/terms-pp/pp`, {
+        name: values.pp,
+        update_date: values.update_date,
+      });
+      console.log(res);
+      refetch();
+      snack.success(`${res.data.message}`);
+    } catch (error) {
+      console.error(error);
+      snack.error(error as string);
+    } finally {
+      hideLoading();
+    }
+  };
+
   return (
     <>
       <Typography variant="h1" color="primary">
@@ -45,8 +90,12 @@ const TermsPP = () => {
             <Typography color="text.secondary">
               Last update: {termsPP && termsPP.data.terms.update_date}
             </Typography>
-            <Button variant="contained" disabled={!dirtyFields.terms}>
-              Save Terms
+            <Button
+              variant="contained"
+              disabled={!dirtyFields.terms}
+              onClick={handleSubmit(onUpdateTerms)}
+            >
+              Update
             </Button>
           </Box>
         </Grid>
@@ -56,8 +105,12 @@ const TermsPP = () => {
             <Typography color="text.secondary">
               Last update: {termsPP && termsPP.data.pp.update_date}
             </Typography>
-            <Button variant="contained" disabled={!dirtyFields.pp}>
-              Save PP
+            <Button
+              variant="contained"
+              disabled={!dirtyFields.pp}
+              onClick={handleSubmit(onUpdatePP)}
+            >
+              Update
             </Button>
           </Box>
         </Grid>
