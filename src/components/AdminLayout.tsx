@@ -40,6 +40,7 @@ export default function AdminLayout() {
       {items &&
         items.map((menuGroup, index) => (
           <List
+            dense
             subheader={
               menuGroup.subheader && (
                 <ListSubheader color="primary">{menuGroup.subheader}</ListSubheader>
