@@ -12,11 +12,11 @@ import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./error/ErrorFallback";
 import AdminLayout from "./components/AdminLayout";
 import ShortBrief from "./pages/ShortBrief";
+import BusinessUnit from "./pages/BusinessUnit";
+import TermsPP from "./pages/TermsPP";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
-const BusinessUnit = lazy(() => import("@/pages/BusinessUnit"));
-const TermsPP = lazy(() => import("@/pages/TermsPP"));
 
 const router = createBrowserRouter([
   {
