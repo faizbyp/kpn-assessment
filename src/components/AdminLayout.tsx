@@ -9,10 +9,11 @@ import HomeIcon from "@mui/icons-material/Home";
 import BusinessIcon from "@mui/icons-material/Business";
 import PolicyIcon from "@mui/icons-material/Policy";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AppBar, IconButton, ListSubheader, Toolbar, Typography } from "@mui/material";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import UserMenu from "./UserMenu";
+import Cookies from "js-cookie";
 
 const items = [
   {
@@ -30,6 +31,16 @@ const items = [
 
 export default function AdminLayout() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // PROTECT ROUTES INSIDE ADMIN LAYOUT
+  useEffect(() => {
+    const userStorage = localStorage.getItem("user-storage");
+    const token = Cookies.get("access_token");
+    if (!userStorage || !token) {
+      navigate("/");
+    }
+  });
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
