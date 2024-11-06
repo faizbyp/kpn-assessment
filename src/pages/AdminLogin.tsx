@@ -7,6 +7,8 @@ import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
 import { API } from "@/utils/api";
 import { isAxiosError } from "axios";
+import useAuthStore from "@/hooks/useAuthStore";
+import { Auth } from "@/types/AuthAdmin";
 
 interface LoginValues {
   username: string;
@@ -14,6 +16,7 @@ interface LoginValues {
 }
 
 const AdminLogin = () => {
+  const setAuth = useAuthStore((state: Auth) => state.setAuth);
   const navigate = useNavigate();
   const { showLoading, hideLoading } = useLoading();
   const { control, handleSubmit } = useForm<LoginValues>({
@@ -28,7 +31,8 @@ const AdminLogin = () => {
     showLoading();
     try {
       const res = await API.post(`/admin/login`, values);
-      console.log(res);
+      console.log(res.data.data);
+      setAuth(res.data.data);
       snack.success(`${res.data.message}`);
       navigate("/admin");
     } catch (error) {

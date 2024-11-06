@@ -1,7 +1,10 @@
+import useAuthStore from "@/hooks/useAuthStore";
 import { Avatar, Box, IconButton, Menu, MenuItem, Typography } from "@mui/material";
 import { useState } from "react";
 
 const UserMenu = () => {
+  const fullname = useAuthStore((state) => state.fullname);
+  const signOut = useAuthStore((state) => state.signOut);
   const [anchorEl, setAnchorEl] = useState<EventTarget | Element | null>(null);
 
   const handleClick = (event: any): any => {
@@ -14,6 +17,7 @@ const UserMenu = () => {
 
   const handleLogout = () => {
     console.log("logout");
+    signOut();
   };
 
   const open = Boolean(anchorEl);
@@ -49,11 +53,9 @@ const UserMenu = () => {
             }}
           >
             <IconButton>
-              {/* <Avatar>{session?.user?.username.slice(0, 1).toUpperCase()}</Avatar> */}
-              <Avatar>AA</Avatar>
+              <Avatar>{fullname.slice(0, 1).toUpperCase()}</Avatar>
             </IconButton>
-            {/* <Typography>{session?.user?.username}</Typography> */}
-            <Typography>User</Typography>
+            <Typography>{fullname}</Typography>
           </Box>
         </MenuItem>
         <MenuItem onClick={handleLogout} sx={{ width: "10rem" }}>

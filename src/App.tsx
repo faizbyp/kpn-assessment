@@ -14,6 +14,7 @@ import AdminLayout from "./components/AdminLayout";
 import ShortBrief from "./pages/ShortBrief";
 import BusinessUnit from "./pages/BusinessUnit";
 import TermsPP from "./pages/TermsPP";
+import Landing from "./pages/Landing";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -21,36 +22,38 @@ const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Landing />,
+  },
+  {
+    path: "/client",
     element: <RouteProtector />,
-    children: [
-      { path: "", element: <WelcomeClient /> },
-      {
-        path: "admin",
-        element: <AdminLayout />,
-        children: [
-          {
-            path: "",
-            element: <Admin />,
-          },
-          {
-            path: "bu",
-            element: <BusinessUnit />,
-          },
-          {
-            path: "terms-pp",
-            element: <TermsPP />,
-          },
-          {
-            path: "short-brief",
-            element: <ShortBrief />,
-          },
-        ],
-      },
-    ],
+    children: [{ path: "", element: <WelcomeClient /> }],
   },
   {
     path: "/admin-login",
     element: <AdminLogin />,
+  },
+  {
+    path: "admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "",
+        element: <Admin />,
+      },
+      {
+        path: "bu",
+        element: <BusinessUnit />,
+      },
+      {
+        path: "terms-pp",
+        element: <TermsPP />,
+      },
+      {
+        path: "short-brief",
+        element: <ShortBrief />,
+      },
+    ],
   },
 ]);
 

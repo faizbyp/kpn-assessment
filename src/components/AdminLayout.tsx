@@ -62,7 +62,7 @@ export default function AdminLayout() {
   );
 
   return (
-    <div>
+    <>
       <AppBar position="fixed">
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -88,6 +88,6 @@ export default function AdminLayout() {
       <Drawer open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
-    </div>
+    </>
   );
 }
