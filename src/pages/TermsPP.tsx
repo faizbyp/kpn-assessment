@@ -1,4 +1,5 @@
 import TextFieldCtrl from "@/components/forms/TextField";
+import { BoxSkeleton } from "@/components/Skeleton";
 import useFetch from "@/hooks/useFetch";
 import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
@@ -85,34 +86,52 @@ const TermsPP = () => {
       </Typography>
       <Grid container spacing={4}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <TextFieldCtrl name="terms" label="Terms" control={control} multiline rows={6} />
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography color="text.secondary">
-              Last update: {termsPP && termsPP.data.terms.update_date}
-            </Typography>
-            <Button
-              variant="contained"
-              disabled={!dirtyFields.terms}
-              onClick={handleSubmit(onUpdateTerms)}
-            >
-              Update
-            </Button>
-          </Box>
+          {termsPP ? (
+            <>
+              <TextFieldCtrl name="terms" label="Terms" control={control} multiline rows={6} />
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Typography color="text.secondary">
+                  Last update: {termsPP && termsPP.data.terms.update_date}
+                </Typography>
+                <Button
+                  variant="contained"
+                  disabled={!dirtyFields.terms}
+                  onClick={handleSubmit(onUpdateTerms)}
+                >
+                  Update
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <BoxSkeleton />
+          )}
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <TextFieldCtrl name="pp" label="Privacy Policy" control={control} multiline rows={6} />
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography color="text.secondary">
-              Last update: {termsPP && termsPP.data.pp.update_date}
-            </Typography>
-            <Button
-              variant="contained"
-              disabled={!dirtyFields.pp}
-              onClick={handleSubmit(onUpdatePP)}
-            >
-              Update
-            </Button>
-          </Box>
+          {termsPP ? (
+            <>
+              <TextFieldCtrl
+                name="pp"
+                label="Privacy Policy"
+                control={control}
+                multiline
+                rows={6}
+              />
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Typography color="text.secondary">
+                  Last update: {termsPP && termsPP.data.pp.update_date}
+                </Typography>
+                <Button
+                  variant="contained"
+                  disabled={!dirtyFields.pp}
+                  onClick={handleSubmit(onUpdatePP)}
+                >
+                  Update
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <BoxSkeleton />
+          )}
         </Grid>
       </Grid>
     </>

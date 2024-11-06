@@ -1,4 +1,5 @@
 import TextFieldCtrl from "@/components/forms/TextField";
+import { BoxSkeleton } from "@/components/Skeleton";
 import useFetch from "@/hooks/useFetch";
 import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
@@ -61,23 +62,29 @@ const ShortBrief = () => {
       </Typography>
       <Grid container spacing={4}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <TextFieldCtrl
-            name="short_brief_name"
-            label="Brief"
-            control={control}
-            multiline
-            rows={6}
-          />
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography color="text.secondary">Last update:</Typography>
-            <Button
-              variant="contained"
-              disabled={!dirtyFields.short_brief_name}
-              onClick={handleSubmit(onUpdate)}
-            >
-              Update
-            </Button>
-          </Box>
+          {brief ? (
+            <>
+              <TextFieldCtrl
+                name="short_brief_name"
+                label="Brief"
+                control={control}
+                multiline
+                rows={6}
+              />
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Typography color="text.secondary">Last update:</Typography>
+                <Button
+                  variant="contained"
+                  disabled={!dirtyFields.short_brief_name}
+                  onClick={handleSubmit(onUpdate)}
+                >
+                  Update
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <BoxSkeleton />
+          )}
         </Grid>
       </Grid>
     </>
