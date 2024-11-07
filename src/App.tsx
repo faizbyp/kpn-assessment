@@ -15,6 +15,7 @@ import ShortBrief from "./pages/ShortBrief";
 import BusinessUnit from "./pages/BusinessUnit";
 import TermsPP from "./pages/TermsPP";
 import Landing from "./pages/Landing";
+import Series from "./pages/Series";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: "short-brief",
         element: <ShortBrief />,
+      },
+      {
+        path: "series",
+        element: <Series />,
       },
     ],
   },

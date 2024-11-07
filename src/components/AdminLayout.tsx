@@ -5,15 +5,16 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import SubjectIcon from "@mui/icons-material/Subject";
 import HomeIcon from "@mui/icons-material/Home";
 import BusinessIcon from "@mui/icons-material/Business";
 import PolicyIcon from "@mui/icons-material/Policy";
 import MenuIcon from "@mui/icons-material/Menu";
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import { useEffect, useState } from "react";
 import { AppBar, IconButton, ListSubheader, Toolbar, Typography } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import UserMenu from "./UserMenu";
-import Cookies from "js-cookie";
 
 const items = [
   {
@@ -24,7 +25,8 @@ const items = [
     items: [
       { name: "Business Unit", link: "/admin/bu", icon: <BusinessIcon /> },
       { name: "Terms & PP", link: "/admin/terms-pp", icon: <PolicyIcon /> },
-      { name: "Short Brief", link: "/admin/short-brief", icon: <PolicyIcon /> },
+      { name: "Short Brief", link: "/admin/short-brief", icon: <SubjectIcon /> },
+      { name: "Series", link: "/admin/series", icon: <QuestionAnswerIcon /> },
     ],
   },
 ];
@@ -35,9 +37,8 @@ export default function AdminLayout() {
 
   // PROTECT ROUTES INSIDE ADMIN LAYOUT
   useEffect(() => {
-    const userStorage = localStorage.getItem("user-storage");
-    const token = Cookies.get("access_token");
-    if (!userStorage || !token) {
+    const authStorage = localStorage.getItem("auth-storage");
+    if (!authStorage) {
       navigate("/");
     }
   });
