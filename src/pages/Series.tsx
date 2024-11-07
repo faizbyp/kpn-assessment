@@ -79,9 +79,14 @@ const Series = () => {
       console.error(error);
       snack.error(error as string);
     } finally {
-      closeEdit();
+      handleCloseEdit();
       hideLoading();
     }
+  };
+
+  const handleCloseEdit = () => {
+    reset();
+    closeEdit();
   };
 
   const handleOpenDelete = (id: string, name: string) => {
@@ -180,10 +185,10 @@ const Series = () => {
       <DialogComp
         title="Edit Series"
         open={isOpenEdit}
-        onClose={closeEdit}
+        onClose={handleCloseEdit}
         actions={
           <>
-            <Button onClick={closeEdit} variant="outlined">
+            <Button onClick={handleCloseEdit} variant="outlined">
               Cancel
             </Button>
             <Button onClick={handleSubmit(onEdit)} variant="contained" disabled={!isDirty}>
