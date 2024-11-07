@@ -11,7 +11,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "../assessment_app/public/build",
+    outDir: "../kpn-assessment-be/dist/public/build",
     emptyOutDir: true,
   },
 });
