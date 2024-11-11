@@ -1,11 +1,10 @@
 import { create } from "zustand";
-import Cookies from "js-cookie";
 import { LoginRes, Auth } from "@/types/AuthAdmin";
 import { persist } from "zustand/middleware";
 
 const useAuthStore = create<Auth>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       username: "",
       fullname: "",
       email: "",
@@ -20,12 +19,10 @@ const useAuthStore = create<Auth>()(
           access_token: loginRes.access_token,
           refresh_token: loginRes.refresh_token,
         });
-        Cookies.set("access_token", loginRes.access_token);
-        Cookies.set("refresh_token", loginRes.refresh_token);
       },
 
       checkAuth: () => {
-        const access_token = Cookies.get("access_token");
+        const access_token = get().access_token;
         if (access_token) {
           set({
             access_token: access_token,
@@ -35,7 +32,9 @@ const useAuthStore = create<Auth>()(
         }
       },
 
-      refreshToken: () => {},
+      setAccessToken: (newToken) => {
+        set({ access_token: newToken });
+      },
 
       signOut: () => {
         set({
@@ -45,18 +44,18 @@ const useAuthStore = create<Auth>()(
           access_token: "",
           refresh_token: "",
         });
-        Cookies.remove("access_token");
-        Cookies.remove("refresh_token");
-        localStorage.removeItem("user-storage");
+        localStorage.removeItem("auth-storage");
         window.location.replace("/");
       },
     }),
     {
-      name: "user-storage",
+      name: "auth-storage",
       partialize: (state) => ({
         username: state.username,
         fullname: state.fullname,
         email: state.email,
+        access_token: state.access_token,
+        refresh_token: state.refresh_token,
       }),
     }
   )

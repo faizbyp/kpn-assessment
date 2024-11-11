@@ -39,10 +39,11 @@ const AdminLogin = () => {
       if (isAxiosError(error)) {
         const data = error.response?.data;
         snack.error(data.message);
+        console.error(error.response);
       } else {
         snack.error("Error, check log for details");
+        console.error(error);
       }
-      console.error(error);
     } finally {
       hideLoading();
     }

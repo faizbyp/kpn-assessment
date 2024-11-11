@@ -24,7 +24,7 @@ export type LoginRes = {
 type AuthAction = {
   setAuth: (loginRes: LoginRes) => void;
   checkAuth: () => void;
-  refreshToken: () => void;
+  setAccessToken: (newToken: string) => void;
   signOut: () => void;
 };
 

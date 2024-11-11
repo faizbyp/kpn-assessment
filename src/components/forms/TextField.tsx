@@ -17,6 +17,7 @@ interface TextFieldProps {
   rows?: number | undefined;
   disabled?: boolean;
   endAdornment?: string | undefined;
+  noMargin?: boolean;
 }
 
 const TextFieldCtrl = ({
@@ -34,6 +35,7 @@ const TextFieldCtrl = ({
   rows,
   disabled,
   endAdornment,
+  noMargin,
 }: TextFieldProps) => {
   return (
     <>
@@ -75,7 +77,7 @@ const TextFieldCtrl = ({
                 endAdornment: endAdornment,
               },
             }}
-            sx={{ mb: 2 }}
+            sx={{ mb: noMargin ? 0 : 2 }}
             fullWidth
           />
         )}

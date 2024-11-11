@@ -16,6 +16,7 @@ import BusinessUnit from "./pages/BusinessUnit";
 import TermsPP from "./pages/TermsPP";
 import Landing from "./pages/Landing";
 import Series from "./pages/Series";
+import Criteria from "./pages/Criteria";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: "series",
         element: <Series />,
+      },
+      {
+        path: "criteria",
+        element: <Criteria />,
       },
     ],
   },

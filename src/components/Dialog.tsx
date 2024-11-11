@@ -8,17 +8,26 @@ interface DialogProps {
   open: boolean;
   onClose: any;
   keepMounted?: boolean;
+  maxWidth?: "xs" | "sm" | "md" | "lg";
   children: ReactNode;
 }
 
-const DialogComp = ({ title, actions, open, onClose, keepMounted, children }: DialogProps) => {
+const DialogComp = ({
+  title,
+  actions,
+  open,
+  onClose,
+  keepMounted,
+  maxWidth = "sm",
+  children,
+}: DialogProps) => {
   return (
     <Dialog
       open={open}
       onClose={onClose}
       aria-modal="true"
       fullWidth
-      maxWidth="sm"
+      maxWidth={maxWidth}
       closeAfterTransition
       keepMounted={keepMounted}
     >
