@@ -12,6 +12,7 @@ import PolicyIcon from "@mui/icons-material/Policy";
 import MenuIcon from "@mui/icons-material/Menu";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import SportsScoreIcon from "@mui/icons-material/SportsScore";
+import ListIcon from "@mui/icons-material/List";
 import { useEffect, useState } from "react";
 import { AppBar, IconButton, ListSubheader, Toolbar, Typography } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -29,6 +30,7 @@ const items = [
       { name: "Short Brief", link: "/admin/short-brief", icon: <SubjectIcon /> },
       { name: "Series", link: "/admin/series", icon: <QuestionAnswerIcon /> },
       { name: "Criteria", link: "/admin/criteria", icon: <SportsScoreIcon /> },
+      { name: "Function Menu", link: "/admin/function-menu", icon: <ListIcon /> },
     ],
   },
 ];

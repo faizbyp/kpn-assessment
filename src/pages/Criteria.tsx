@@ -102,7 +102,7 @@ const Criteria = () => {
       const res = await API.delete(`/criteria/${id}`);
       console.log(res);
       refetch();
-      snack.success(`${res.data?.message}: ${res.data.name}`);
+      snack.success(`${res.data.message}: ${res.data.name}`);
     } catch (error) {
       console.error(error);
       snack.error(error as string);
