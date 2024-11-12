@@ -14,14 +14,11 @@ import { useForm } from "react-hook-form";
 import TextFieldCtrl from "@/components/forms/TextField";
 import CheckboxCtrl from "@/components/forms/Checkbox";
 import AddIcon from "@mui/icons-material/Add";
-
-interface BUValues {
-  bu_name: string;
-  bu_code: string;
-  is_active: boolean;
-}
+import useAuthStore from "@/hooks/useAuthStore";
+import { BUValues } from "@/types/MasterData";
 
 const BusinessUnit = () => {
+  const user_id = useAuthStore((state) => state.user_id);
   const { showLoading, hideLoading } = useLoading();
   const { data: bu, refetch } = useFetch<any>("/bu");
   const [selectedBU, setSelectedBU] = useState({ id: "", bu_name: "" });
@@ -38,6 +35,7 @@ const BusinessUnit = () => {
       bu_name: "",
       bu_code: "",
       is_active: true,
+      created_by: user_id,
     } as BUValues,
   });
 
