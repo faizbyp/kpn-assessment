@@ -1,20 +1,17 @@
 import TextFieldCtrl from "@/components/forms/TextField";
 import { BoxSkeleton } from "@/components/Skeleton";
+import useAuthStore from "@/hooks/useAuthStore";
 import useFetch from "@/hooks/useFetch";
 import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
+import { TermsPPValues } from "@/types/MasterData";
 import { API } from "@/utils/api";
 import { Box, Button, Grid2 as Grid, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-interface TermsPPValues {
-  terms: string;
-  pp: string;
-  update_date: Date;
-}
-
 const TermsPP = () => {
+  const user_id = useAuthStore((state) => state.user_id);
   const { data: termsPP, refetch } = useFetch<any>("/terms-pp");
   const { showLoading, hideLoading } = useLoading();
   const {
@@ -26,7 +23,7 @@ const TermsPP = () => {
     defaultValues: {
       terms: "",
       pp: "",
-      update_date: new Date(),
+      updated_by: user_id,
     } as TermsPPValues,
   });
 
@@ -47,7 +44,7 @@ const TermsPP = () => {
     try {
       const res = await API.patch(`/terms-pp/terms`, {
         name: values.terms,
-        update_date: values.update_date,
+        updated_by: user_id,
       });
       console.log(res);
       refetch();
@@ -66,7 +63,7 @@ const TermsPP = () => {
     try {
       const res = await API.patch(`/terms-pp/pp`, {
         name: values.pp,
-        update_date: values.update_date,
+        updated_by: user_id,
       });
       console.log(res);
       refetch();
@@ -91,7 +88,7 @@ const TermsPP = () => {
               <TextFieldCtrl name="terms" label="Terms" control={control} multiline rows={6} />
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Typography color="text.secondary">
-                  Last update: {termsPP && termsPP.data.terms.update_date}
+                  Last update: {termsPP && termsPP.data.terms.updated_date}
                 </Typography>
                 <Button
                   variant="contained"
@@ -118,7 +115,7 @@ const TermsPP = () => {
               />
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Typography color="text.secondary">
-                  Last update: {termsPP && termsPP.data.pp.update_date}
+                  Last update: {termsPP && termsPP.data.pp.updated_date}
                 </Typography>
                 <Button
                   variant="contained"

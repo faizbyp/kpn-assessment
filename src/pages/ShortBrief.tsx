@@ -1,19 +1,17 @@
 import TextFieldCtrl from "@/components/forms/TextField";
 import { BoxSkeleton } from "@/components/Skeleton";
+import useAuthStore from "@/hooks/useAuthStore";
 import useFetch from "@/hooks/useFetch";
 import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
+import { BriefValues } from "@/types/MasterData";
 import { API } from "@/utils/api";
 import { Box, Button, Grid2 as Grid, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
-interface BriefValues {
-  short_brief_name: string;
-  update_date: Date;
-}
-
 const ShortBrief = () => {
+  const user_id = useAuthStore((state) => state.user_id);
   const { data: brief, refetch } = useFetch<any>("/short-brief");
   const { showLoading, hideLoading } = useLoading();
   const {
@@ -24,14 +22,15 @@ const ShortBrief = () => {
   } = useForm({
     defaultValues: {
       short_brief_name: "",
-      update_date: new Date(),
+      updated_by: user_id,
     } as BriefValues,
   });
 
   useEffect(() => {
     if (brief) {
       reset({
-        short_brief_name: brief.short_brief_name,
+        short_brief_name: brief.data.short_brief_name,
+        updated_by: user_id,
       });
     }
   }, [brief]);
@@ -40,10 +39,7 @@ const ShortBrief = () => {
     console.log(values);
     showLoading();
     try {
-      const res = await API.patch(`/short-brief`, {
-        short_brief_name: values.short_brief_name,
-        update_date: values.update_date,
-      });
+      const res = await API.patch(`/short-brief`, values);
       console.log(res);
       refetch();
       snack.success(`${res.data.message}`);
@@ -72,7 +68,9 @@ const ShortBrief = () => {
                 rows={6}
               />
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Typography color="text.secondary">Last update:</Typography>
+                <Typography color="text.secondary">
+                  Last update: {brief && brief.data.updated_date}
+                </Typography>
                 <Button
                   variant="contained"
                   disabled={!dirtyFields.short_brief_name}
