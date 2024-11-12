@@ -22,6 +22,7 @@ import CheckboxCtrl from "@/components/forms/Checkbox";
 import { useLoading } from "@/providers/LoadingProvider";
 import { useState } from "react";
 import NumericFieldCtrl from "@/components/forms/NumericField";
+import { BoxSkeleton } from "@/components/Skeleton";
 
 interface CriteriaValues {
   criteria_name: string;
@@ -48,6 +49,8 @@ const Criteria = () => {
   const { showLoading, hideLoading } = useLoading();
   const { data: criteria, refetch } = useFetch<any>("/criteria");
   const [isEdit, setIsEdit] = useState(false);
+  const [selected, setSelected] = useState({ id: "", name: "" });
+  const { isOpen: isOpenDelete, open: openDelete, close: closeDelete } = useDialog();
   const { isOpen: isOpenForm, open: openForm, close: closeForm } = useDialog();
   const {
     control,
@@ -86,6 +89,28 @@ const Criteria = () => {
   // const handleOpenForm = () => {
   //   console.log("laskdjalsj");
   // };
+
+  const handleOpenDelete = (id: string, name: string) => {
+    setSelected({ id, name });
+    openDelete();
+  };
+
+  const handleDelete = async (id: string) => {
+    console.log(selected);
+    showLoading();
+    try {
+      const res = await API.delete(`/criteria/${id}`);
+      console.log(res);
+      refetch();
+      snack.success(`${res.data?.message}: ${res.data.name}`);
+    } catch (error) {
+      console.error(error);
+      snack.error(error as string);
+    } finally {
+      closeDelete();
+      hideLoading();
+    }
+  };
 
   const onCreate = async (values: CategoryValues) => {
     console.log("test", values);
@@ -172,9 +197,16 @@ const Criteria = () => {
                     ))}
                   </CardContent>
                   <CardActions>
-                    <Box sx={{ textAlign: "right", width: "100%" }}>
+                    <Box sx={{ display: "flex", gap: 2, justifyContent: "end", width: "100%" }}>
                       <Button variant="outlined" disabled>
                         Edit
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleOpenDelete(category.value_id, category.value_name)}
+                      >
+                        Delete
                       </Button>
                     </Box>
                   </CardActions>
@@ -184,7 +216,7 @@ const Criteria = () => {
           </Grid>
         </>
       ) : (
-        <Typography>loading</Typography>
+        <BoxSkeleton />
       )}
 
       <DialogComp
@@ -288,6 +320,24 @@ const Criteria = () => {
           </Box>
         ))}
         <CheckboxCtrl name="is_active" control={control} label="Active" />
+      </DialogComp>
+
+      <DialogComp
+        title="Delete Criteria"
+        open={isOpenDelete}
+        onClose={closeDelete}
+        actions={
+          <>
+            <Button onClick={closeDelete} variant="outlined" color="error">
+              Cancel
+            </Button>
+            <Button onClick={() => handleDelete(selected.id)} variant="contained" color="error">
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <Typography>{`Are you sure you want to delete ${selected.name}?`}</Typography>
       </DialogComp>
     </>
   );
