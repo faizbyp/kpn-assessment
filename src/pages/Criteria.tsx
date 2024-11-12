@@ -41,7 +41,7 @@ interface Criteria extends CriteriaValues {
 interface CategoryValues {
   category_code: string;
   category_name: string;
-  id_user: string;
+  user_id: string;
   criteria: CriteriaValues[];
 }
 
@@ -63,7 +63,7 @@ const Criteria = () => {
     defaultValues: {
       category_code: "",
       category_name: "",
-      id_user: "",
+      user_id: "",
       criteria: [
         {
           criteria_name: "",
