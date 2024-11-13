@@ -40,3 +40,20 @@ export type CategoryValues = {
   created_by: string;
   criteria: CriteriaValues[];
 };
+
+// SERIES
+export type SeriesValues = {
+  series_name: string;
+  is_active: boolean;
+};
+
+export type SeriesType = SeriesValues & {
+  id: string;
+};
+
+// FUNCTION MENU
+export type FMValues = {
+  fm_code?: string;
+  fm_name: string;
+  is_active: boolean;
+};

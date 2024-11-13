@@ -2,26 +2,20 @@ import DialogComp from "@/components/Dialog";
 import CheckboxCtrl from "@/components/forms/Checkbox";
 import TextFieldCtrl from "@/components/forms/TextField";
 import { ListSkeleton } from "@/components/Skeleton";
+import useAuthStore from "@/hooks/useAuthStore";
 import useDialog from "@/hooks/useDialog";
 import useFetch from "@/hooks/useFetch";
 import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
+import { SeriesType, SeriesValues } from "@/types/MasterData";
 import { API } from "@/utils/api";
 import { Box, Button, Grid2 as Grid, List, ListItem, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-interface SeriesValues {
-  series_name: string;
-  is_active: boolean;
-}
-
-interface Series extends SeriesValues {
-  id: string;
-}
-
 const Series = () => {
+  const user_id = useAuthStore((state) => state.user_id);
   const { showLoading, hideLoading } = useLoading();
   const { data: series, refetch } = useFetch<any>("/series");
   const [curSeries, setCurSeries] = useState({ id: "", series_name: "" });
@@ -35,6 +29,7 @@ const Series = () => {
   } = useForm({
     defaultValues: {
       series_name: "",
+      created_by: user_id,
       is_active: false,
     },
   });
@@ -77,7 +72,7 @@ const Series = () => {
     console.log(values);
     showLoading();
     try {
-      const res = await API.patch(`/series/${curSeries.id}`, values);
+      const res = await API.patch(`/series/${curSeries.id}`, { ...values, updated_by: user_id });
       console.log(res);
       reset();
       refetch();
@@ -152,7 +147,7 @@ const Series = () => {
         <Grid size={{ xs: 12, md: 6 }}>
           {series ? (
             <List>
-              {series.data.map((seri: Series) => (
+              {series.data.map((seri: SeriesType) => (
                 <ListItem key={seri.id} sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Typography color={seri.is_active ? "text.primary" : "text.secondary"}>
                     {seri.series_name}

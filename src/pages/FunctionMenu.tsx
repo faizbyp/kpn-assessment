@@ -15,14 +15,11 @@ import CheckboxCtrl from "@/components/forms/Checkbox";
 import { snack } from "@/providers/SnackbarProvider";
 import { API } from "@/utils/api";
 import { isAxiosError } from "axios";
-
-interface FMValues {
-  fm_code?: string;
-  fm_name: string;
-  is_active: boolean;
-}
+import { FMValues } from "@/types/MasterData";
+import useAuthStore from "@/hooks/useAuthStore";
 
 const FunctionMenu = () => {
+  const user_id = useAuthStore((state) => state.user_id);
   const { showLoading, hideLoading } = useLoading();
   const { data: fm, refetch } = useFetch<any>("/function-menu");
   const [selected, setSelected] = useState({ id: "", name: "" });
@@ -38,6 +35,7 @@ const FunctionMenu = () => {
     defaultValues: {
       fm_code: "",
       fm_name: "",
+      created_by: user_id,
       is_active: true,
     },
   });
