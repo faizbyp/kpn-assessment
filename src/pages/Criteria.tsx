@@ -15,7 +15,6 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import useDialog from "@/hooks/useDialog";
 import { useFieldArray, useForm } from "react-hook-form";
 import { snack } from "@/providers/SnackbarProvider";
-import { API } from "@/utils/api";
 import DialogComp from "@/components/Dialog";
 import TextFieldCtrl from "@/components/forms/TextField";
 import { useLoading } from "@/providers/LoadingProvider";
@@ -25,8 +24,10 @@ import { BoxSkeleton } from "@/components/Skeleton";
 import { CategoryValues, CriteriaType } from "@/types/MasterData";
 import useAuthStore from "@/hooks/useAuthStore";
 import { isAxiosError } from "axios";
+import useAPI from "@/hooks/useAPI";
 
 const Criteria = () => {
+  const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
   const { showLoading, hideLoading } = useLoading();
   const { data: criteria, refetch } = useFetch<any>("/criteria");

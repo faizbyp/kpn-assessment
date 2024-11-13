@@ -1,17 +1,18 @@
 import TextFieldCtrl from "@/components/forms/TextField";
 import { BoxSkeleton } from "@/components/Skeleton";
+import useAPI from "@/hooks/useAPI";
 import useAuthStore from "@/hooks/useAuthStore";
 import useFetch from "@/hooks/useFetch";
 import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
 import { TermsPPValues } from "@/types/MasterData";
-import { API } from "@/utils/api";
 import { Box, Button, Grid2 as Grid, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 const TermsPP = () => {
+  const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
   const { data: termsPP, refetch } = useFetch<any>("/terms-pp");
   const { showLoading, hideLoading } = useLoading();

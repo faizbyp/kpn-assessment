@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { API } from "../utils/api";
+import useAPI from "./useAPI";
 
 interface FetchState<T> {
   data: T | null;
@@ -9,6 +9,7 @@ interface FetchState<T> {
 }
 
 const useFetch = <T,>(url: string): FetchState<T> => {
+  const API = useAPI();
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);

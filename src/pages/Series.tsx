@@ -2,19 +2,20 @@ import DialogComp from "@/components/Dialog";
 import CheckboxCtrl from "@/components/forms/Checkbox";
 import TextFieldCtrl from "@/components/forms/TextField";
 import { ListSkeleton } from "@/components/Skeleton";
+import useAPI from "@/hooks/useAPI";
 import useAuthStore from "@/hooks/useAuthStore";
 import useDialog from "@/hooks/useDialog";
 import useFetch from "@/hooks/useFetch";
 import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
 import { SeriesType, SeriesValues } from "@/types/MasterData";
-import { API } from "@/utils/api";
 import { Box, Button, Grid2 as Grid, List, ListItem, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const Series = () => {
+  const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
   const { showLoading, hideLoading } = useLoading();
   const { data: series, refetch } = useFetch<any>("/series");

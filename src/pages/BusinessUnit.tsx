@@ -7,7 +7,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useDialog from "../hooks/useDialog";
 import { snack } from "../providers/SnackbarProvider";
-// import { API } from "../utils/api";
 import { useLoading } from "../providers/LoadingProvider";
 import DialogComp from "@/components/Dialog";
 import { useForm } from "react-hook-form";

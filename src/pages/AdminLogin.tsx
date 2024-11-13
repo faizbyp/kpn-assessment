@@ -5,10 +5,10 @@ import { PasswordWithEye } from "../components/forms/PasswordWithEye";
 import { useNavigate } from "react-router-dom";
 import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
-import { API } from "@/utils/api";
 import { isAxiosError } from "axios";
 import useAuthStore from "@/hooks/useAuthStore";
 import { Auth } from "@/types/AuthAdmin";
+import useAPI from "@/hooks/useAPI";
 
 interface LoginValues {
   username: string;
@@ -16,6 +16,7 @@ interface LoginValues {
 }
 
 const AdminLogin = () => {
+  const API = useAPI();
   const setAuth = useAuthStore((state: Auth) => state.setAuth);
   const navigate = useNavigate();
   const { showLoading, hideLoading } = useLoading();

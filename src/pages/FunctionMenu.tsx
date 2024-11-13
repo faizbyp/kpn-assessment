@@ -13,12 +13,13 @@ import DialogComp from "@/components/Dialog";
 import TextFieldCtrl from "@/components/forms/TextField";
 import CheckboxCtrl from "@/components/forms/Checkbox";
 import { snack } from "@/providers/SnackbarProvider";
-import { API } from "@/utils/api";
 import { isAxiosError } from "axios";
 import { FMValues } from "@/types/MasterData";
 import useAuthStore from "@/hooks/useAuthStore";
+import useAPI from "@/hooks/useAPI";
 
 const FunctionMenu = () => {
+  const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
   const { showLoading, hideLoading } = useLoading();
   const { data: fm, refetch } = useFetch<any>("/function-menu");
