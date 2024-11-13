@@ -7,7 +7,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useDialog from "../hooks/useDialog";
 import { snack } from "../providers/SnackbarProvider";
-import { API } from "../utils/api";
+// import { API } from "../utils/api";
 import { useLoading } from "../providers/LoadingProvider";
 import DialogComp from "@/components/Dialog";
 import { useForm } from "react-hook-form";
@@ -17,8 +17,10 @@ import AddIcon from "@mui/icons-material/Add";
 import useAuthStore from "@/hooks/useAuthStore";
 import { BUValues } from "@/types/MasterData";
 import { isAxiosError } from "axios";
+import useAPI from "@/hooks/useAPI";
 
 const BusinessUnit = () => {
+  const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
   const { showLoading, hideLoading } = useLoading();
   const { data: bu, refetch } = useFetch<any>("/bu");
