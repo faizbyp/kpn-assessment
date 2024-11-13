@@ -14,6 +14,7 @@ import TextFieldCtrl from "@/components/forms/TextField";
 import CheckboxCtrl from "@/components/forms/Checkbox";
 import { snack } from "@/providers/SnackbarProvider";
 import { API } from "@/utils/api";
+import { isAxiosError } from "axios";
 
 interface FMValues {
   fm_code?: string;
@@ -129,8 +130,14 @@ const FunctionMenu = () => {
       refetch();
       snack.success(res.data?.message);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       closeDelete();
       hideLoading();
@@ -146,8 +153,14 @@ const FunctionMenu = () => {
       refetch();
       snack.success(`${res.data.message} ${res.data.bu_code}`);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       handleCloseForm();
       hideLoading();
@@ -163,8 +176,14 @@ const FunctionMenu = () => {
       refetch();
       snack.success(`${res.data.message} ${res.data.fm_code}`);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       handleCloseForm();
       hideLoading();

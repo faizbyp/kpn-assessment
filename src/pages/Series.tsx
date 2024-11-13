@@ -8,6 +8,7 @@ import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
 import { API } from "@/utils/api";
 import { Box, Button, Grid2 as Grid, List, ListItem, Typography } from "@mui/material";
+import { isAxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -47,8 +48,14 @@ const Series = () => {
       refetch();
       snack.success(`${res.data.message}`);
     } catch (error: any) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       hideLoading();
     }
@@ -76,8 +83,14 @@ const Series = () => {
       refetch();
       snack.success(`${res.data.message} ${res.data.series_name}`);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       handleCloseEdit();
       hideLoading();
@@ -102,8 +115,14 @@ const Series = () => {
       refetch();
       snack.success(`${res.data?.message} ${res.data?.id}`);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       closeDelete();
       hideLoading();

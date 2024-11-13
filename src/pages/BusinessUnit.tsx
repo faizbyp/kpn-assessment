@@ -16,6 +16,7 @@ import CheckboxCtrl from "@/components/forms/Checkbox";
 import AddIcon from "@mui/icons-material/Add";
 import useAuthStore from "@/hooks/useAuthStore";
 import { BUValues } from "@/types/MasterData";
+import { isAxiosError } from "axios";
 
 const BusinessUnit = () => {
   const user_id = useAuthStore((state) => state.user_id);
@@ -110,8 +111,14 @@ const BusinessUnit = () => {
       refetch();
       snack.success(res.data?.message);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       closeDelete();
       hideLoading();
@@ -145,8 +152,14 @@ const BusinessUnit = () => {
       refetch();
       snack.success(`${res.data.message} ${res.data.bu_code}`);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       handleCloseForm();
       hideLoading();
@@ -162,8 +175,14 @@ const BusinessUnit = () => {
       refetch();
       snack.success(`${res.data.message} ${res.data.bu_code}`);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       handleCloseForm();
       hideLoading();

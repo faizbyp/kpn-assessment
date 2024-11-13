@@ -7,6 +7,7 @@ import { snack } from "@/providers/SnackbarProvider";
 import { BriefValues } from "@/types/MasterData";
 import { API } from "@/utils/api";
 import { Box, Button, Grid2 as Grid, Typography } from "@mui/material";
+import { isAxiosError } from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
@@ -44,8 +45,14 @@ const ShortBrief = () => {
       refetch();
       snack.success(`${res.data.message}`);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       hideLoading();
     }
