@@ -18,34 +18,16 @@ import { snack } from "@/providers/SnackbarProvider";
 import { API } from "@/utils/api";
 import DialogComp from "@/components/Dialog";
 import TextFieldCtrl from "@/components/forms/TextField";
-import CheckboxCtrl from "@/components/forms/Checkbox";
 import { useLoading } from "@/providers/LoadingProvider";
 import { useState } from "react";
 import NumericFieldCtrl from "@/components/forms/NumericField";
 import { BoxSkeleton } from "@/components/Skeleton";
-
-interface CriteriaValues {
-  criteria_name: string;
-  minimum_score: number;
-  maximum_score: number;
-  is_active: boolean;
-}
-
-interface Criteria extends CriteriaValues {
-  id: string;
-  category_fk: string;
-  created_by: string;
-  created_date: Date;
-}
-
-interface CategoryValues {
-  category_code: string;
-  category_name: string;
-  user_id: string;
-  criteria: CriteriaValues[];
-}
+import { CategoryValues, CriteriaType } from "@/types/MasterData";
+import useAuthStore from "@/hooks/useAuthStore";
+import { isAxiosError } from "axios";
 
 const Criteria = () => {
+  const user_id = useAuthStore((state) => state.user_id);
   const { showLoading, hideLoading } = useLoading();
   const { data: criteria, refetch } = useFetch<any>("/criteria");
   const [isEdit, setIsEdit] = useState(false);
@@ -61,9 +43,9 @@ const Criteria = () => {
     watch,
   } = useForm({
     defaultValues: {
-      category_code: "",
-      category_name: "",
-      user_id: "",
+      value_code: "",
+      value_name: "",
+      created_by: user_id,
       criteria: [
         {
           criteria_name: "",
@@ -86,9 +68,24 @@ const Criteria = () => {
     closeForm();
   };
 
-  // const handleOpenForm = () => {
-  //   console.log("laskdjalsj");
-  // };
+  const handleOpenForm = (data?: CategoryValues, id?: string) => {
+    if (data && id) {
+      setIsEdit(true);
+      setSelected({ id: id, name: data.value_name });
+      reset(
+        {
+          value_code: data.value_code,
+          value_name: data.value_name,
+          // user_id: data.user_id,
+          criteria: data.criteria,
+        },
+        { keepDefaultValues: true, keepDirty: true }
+      );
+    } else {
+      setIsEdit(false);
+    }
+    openForm();
+  };
 
   const handleOpenDelete = (id: string, name: string) => {
     setSelected({ id, name });
@@ -104,8 +101,14 @@ const Criteria = () => {
       refetch();
       snack.success(`${res.data.message}: ${res.data.name}`);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       closeDelete();
       hideLoading();
@@ -121,8 +124,14 @@ const Criteria = () => {
       refetch();
       snack.success(`${res.data.message} ${res.data.category_name}`);
     } catch (error) {
-      console.error(error);
-      snack.error(error as string);
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
     } finally {
       handleCloseForm();
       hideLoading();
@@ -131,26 +140,37 @@ const Criteria = () => {
 
   const onEdit = async (values: CategoryValues) => {
     console.log(values);
-    // showLoading();
-    // try {
-    //   const res = await API.patch(`/bu/${selectedBU.id}`, values);
-    //   console.log(res);
-    //   refetch();
-    //   snack.success(`${res.data.message} ${res.data.bu_code}`);
-    // } catch (error) {
-    //   console.error(error);
-    //   snack.error(error as string);
-    // } finally {
-    //   handleCloseForm();
-    //   hideLoading();
-    // }
+    showLoading();
+    try {
+      const res = await API.patch(`/criteria/${selected.id}`, { ...values, user_id: user_id });
+      console.log(res);
+      refetch();
+      snack.success(`${res.data.message} ${res.data.value_name}`);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
+    } finally {
+      handleCloseForm();
+      hideLoading();
+    }
   };
 
   return (
     <>
       <Typography variant="h1" color="primary">
         Criteria
-        <Button startIcon={<AddIcon />} variant="outlined" onClick={openForm} sx={{ ml: 2 }}>
+        <Button
+          startIcon={<AddIcon />}
+          variant="outlined"
+          onClick={() => handleOpenForm()}
+          sx={{ ml: 2 }}
+        >
           Create Criteria
         </Button>
       </Typography>
@@ -164,7 +184,7 @@ const Criteria = () => {
                     <Typography fontWeight="bold" color="primary" sx={{ mb: 2 }}>
                       {`${category.value_name} (${category.value_code})`}
                     </Typography>
-                    {category.criteria.map((criteria: Criteria, index: number) => (
+                    {category.criteria.map((criteria: CriteriaType, index: number) => (
                       <Box
                         sx={{
                           display: "flex",
@@ -198,7 +218,10 @@ const Criteria = () => {
                   </CardContent>
                   <CardActions>
                     <Box sx={{ display: "flex", gap: 2, justifyContent: "end", width: "100%" }}>
-                      <Button variant="outlined" disabled>
+                      <Button
+                        variant="outlined"
+                        onClick={() => handleOpenForm(category, category.value_id)}
+                      >
                         Edit
                       </Button>
                       <Button
@@ -243,13 +266,13 @@ const Criteria = () => {
           <TextFieldCtrl
             control={control}
             label="Category Name"
-            name="category_name"
+            name="value_name"
             rules={{ required: "Field required" }}
           />
           <TextFieldCtrl
             control={control}
             label="Category Code"
-            name="category_code"
+            name="value_code"
             rules={{ required: "Field required" }}
           />
         </Box>
@@ -319,7 +342,6 @@ const Criteria = () => {
             </Box>
           </Box>
         ))}
-        <CheckboxCtrl name="is_active" control={control} label="Active" />
       </DialogComp>
 
       <DialogComp
