@@ -16,6 +16,7 @@ interface NumericProps {
   onChangeOvr?: (param: string) => void;
   noMargin?: boolean;
   decimalScale?: number;
+  allowNegative?: boolean;
 }
 
 const HelperText = ({ message }: { message: string | undefined }) => {
@@ -42,6 +43,7 @@ export default function NumericFieldCtrl({
   onChangeOvr,
   noMargin,
   decimalScale,
+  allowNegative = false,
 }: NumericProps) {
   return (
     <>
@@ -64,7 +66,7 @@ export default function NumericFieldCtrl({
               customInput={TextField}
               error={!!error}
               fullWidth
-              allowNegative={false}
+              allowNegative={allowNegative}
               decimalScale={decimalScale}
               slotProps={{
                 input: {

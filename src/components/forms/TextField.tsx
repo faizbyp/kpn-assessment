@@ -18,6 +18,7 @@ interface TextFieldProps {
   disabled?: boolean;
   endAdornment?: string | undefined;
   noMargin?: boolean;
+  minRows?: number;
 }
 
 const TextFieldCtrl = ({
@@ -36,6 +37,7 @@ const TextFieldCtrl = ({
   disabled,
   endAdornment,
   noMargin,
+  minRows,
 }: TextFieldProps) => {
   return (
     <>
@@ -69,6 +71,7 @@ const TextFieldCtrl = ({
             variant="outlined"
             multiline={multiline}
             rows={rows}
+            minRows={minRows}
             disabled={disabled}
             slotProps={{
               input: {

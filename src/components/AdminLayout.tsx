@@ -34,6 +34,7 @@ const items = [
       { name: "Series", link: "/admin/series", icon: <QuestionAnswerIcon /> },
       { name: "Criteria", link: "/admin/criteria", icon: <SportsScoreIcon /> },
       { name: "Function Menu", link: "/admin/function-menu", icon: <ListIcon /> },
+      { name: "Question", link: "/admin/question", icon: <ListIcon /> },
     ],
   },
 ];

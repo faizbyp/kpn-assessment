@@ -18,6 +18,8 @@ import Landing from "./pages/Landing";
 import Series from "./pages/Series";
 import Criteria from "./pages/Criteria";
 import FunctionMenu from "./pages/FunctionMenu";
+import Question from "./pages/Question";
+import CreateQuestion from "./pages/CreateQuestion";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -67,6 +69,14 @@ const router = createBrowserRouter([
       {
         path: "function-menu",
         element: <FunctionMenu />,
+      },
+      {
+        path: "question",
+        element: <Question />,
+      },
+      {
+        path: "question/create",
+        element: <CreateQuestion />,
       },
     ],
   },
