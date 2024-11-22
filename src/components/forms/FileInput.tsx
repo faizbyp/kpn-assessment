@@ -1,6 +1,6 @@
 import { ChangeEvent, ReactNode, useRef } from "react";
 import { Controller, RegisterOptions } from "react-hook-form";
-import { Button, Box, Typography, FormHelperText } from "@mui/material";
+import { Button, Box, Typography, FormHelperText, IconButton } from "@mui/material";
 
 interface FileInputProps {
   control: any;
@@ -11,6 +11,9 @@ interface FileInputProps {
   withHelper?: boolean;
   fullWidth?: boolean;
   noMargin?: boolean;
+  floating?: boolean;
+  icon?: ReactNode;
+  passFile?: (file: File) => void;
 }
 
 const FileInput = ({
@@ -22,6 +25,9 @@ const FileInput = ({
   withHelper,
   fullWidth,
   noMargin,
+  floating,
+  icon,
+  passFile,
 }: FileInputProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null); // Create a ref to the input
 
@@ -39,21 +45,35 @@ const FileInput = ({
               onChange={(e: ChangeEvent<HTMLInputElement> | null) => {
                 if (!e || !e.target.files) return;
                 onChange(e.target.files[0]); // Set the file object
+                passFile && passFile(e.target.files[0]);
               }}
               onBlur={onBlur}
               ref={inputRef}
               style={{ display: "none" }} // Hide the default input
             />
-            <Button
-              variant="outlined"
-              color={error && "error"}
-              onClick={() => inputRef.current?.click()} // Safely trigger the file input
-              sx={{ marginRight: withHelper ? 1 : 0 }} // Add some spacing between button and text
-              startIcon={startIcon}
-              fullWidth={fullWidth}
-            >
-              {text}
-            </Button>
+            {icon ? (
+              <IconButton
+                sx={floating ? { position: "absolute", top: 0, left: 0 } : undefined}
+                onClick={() => inputRef.current?.click()}
+              >
+                {icon}
+              </IconButton>
+            ) : (
+              <Button
+                variant="outlined"
+                color={error && "error"}
+                onClick={() => inputRef.current?.click()} // Safely trigger the file input
+                sx={
+                  floating
+                    ? { position: "absolute", top: 0, left: 0 }
+                    : { marginRight: withHelper ? 1 : 0 }
+                }
+                startIcon={startIcon}
+                fullWidth={fullWidth}
+              >
+                {text}
+              </Button>
+            )}
             {withHelper && (
               <Typography
                 variant="body1"

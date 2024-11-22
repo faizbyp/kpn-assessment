@@ -17,6 +17,7 @@ interface NumericProps {
   noMargin?: boolean;
   decimalScale?: number;
   allowNegative?: boolean;
+  maxLength?: number;
 }
 
 const HelperText = ({ message }: { message: string | undefined }) => {
@@ -43,6 +44,7 @@ export default function NumericFieldCtrl({
   onChangeOvr,
   noMargin,
   decimalScale,
+  maxLength,
   allowNegative = false,
 }: NumericProps) {
   return (
@@ -77,6 +79,9 @@ export default function NumericFieldCtrl({
                     min: min,
                     max: max,
                   }),
+                },
+                htmlInput: {
+                  maxLength: maxLength,
                 },
               }}
             />

@@ -4,7 +4,8 @@ import { Controller, RegisterOptions } from "react-hook-form";
 
 interface TextFieldProps {
   control: any;
-  label: string;
+  label?: string;
+  placeholder?: string;
   name: string;
   rules?: RegisterOptions;
   valueovr?: string;
@@ -19,6 +20,7 @@ interface TextFieldProps {
   endAdornment?: string | undefined;
   noMargin?: boolean;
   minRows?: number;
+  textAlign?: "left" | "center" | "right";
 }
 
 const TextFieldCtrl = ({
@@ -38,6 +40,8 @@ const TextFieldCtrl = ({
   endAdornment,
   noMargin,
   minRows,
+  textAlign,
+  placeholder,
 }: TextFieldProps) => {
   return (
     <>
@@ -68,6 +72,7 @@ const TextFieldCtrl = ({
             inputRef={ref}
             value={value}
             label={label}
+            placeholder={placeholder}
             variant="outlined"
             multiline={multiline}
             rows={rows}
@@ -78,6 +83,9 @@ const TextFieldCtrl = ({
                 readOnly: readOnly,
                 inputMode: numericInput ? "numeric" : "text",
                 endAdornment: endAdornment,
+              },
+              htmlInput: {
+                style: { textAlign: textAlign },
               },
             }}
             sx={{ mb: noMargin ? 0 : 2 }}

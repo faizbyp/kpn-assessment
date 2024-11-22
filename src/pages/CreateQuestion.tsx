@@ -5,20 +5,22 @@ import {
   Button,
   Card,
   CardContent,
-  CardMedia,
   Typography,
   Box,
   IconButton,
   CardActions,
 } from "@mui/material";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import NumericFieldCtrl from "@/components/forms/NumericField";
 
 interface AnswerValues {
   text?: string;
   image?: File;
-  score: number;
+  point: number;
 }
 
 interface QuestionValues {
@@ -31,7 +33,7 @@ interface QuestionValues {
 }
 
 const CreateQuestion = () => {
-  const { control, getValues, handleSubmit, watch, setValue } = useForm({
+  const { control, handleSubmit, watch, setValue } = useForm<QuestionValues>({
     defaultValues: {
       q_seq: 0,
       q_layout_type: "",
@@ -42,12 +44,12 @@ const CreateQuestion = () => {
         {
           text: "",
           image: undefined,
-          score: 0,
+          point: 0,
         },
         {
           text: "",
           image: undefined,
-          score: 0,
+          point: 0,
         },
       ],
     },
@@ -63,11 +65,15 @@ const CreateQuestion = () => {
   });
 
   const questionImage = watch("q_input_image");
-  const watchAnswer = watch("answer");
+  const watchAnswer = useWatch({ control, name: "answer" });
 
   const removeQuestionImage = () => {
     setValue("q_input_image", undefined);
   };
+
+  // const addAnswerImage = (index: number, image: File) => {
+  //   setValue(`answer.${index}.image`, image);
+  // };
 
   const removeAnswerImage = (index: number) => {
     setValue(`answer.${index}.image`, undefined);
@@ -86,71 +92,105 @@ const CreateQuestion = () => {
 
       <Card raised>
         <CardContent>
-          {!questionImage && (
-            <FileInput control={control} name="q_input_image" text="Add Question Image" fullWidth />
-          )}
           <Grid container spacing={2} alignItems="end">
             {questionImage && (
-              <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex", position: "relative" }}>
+              <Grid
+                size={{ xs: 12, sm: 4 }}
+                sx={{
+                  display: "flex",
+                  position: "relative",
+                  height: 300,
+                  justifyContent: "center",
+                }}
+              >
                 <img
                   src={URL.createObjectURL(questionImage)}
-                  style={{ width: "100%", objectFit: "contain" }}
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
                 />
-                <IconButton sx={{ position: "absolute" }} onClick={removeQuestionImage}>
+                <IconButton
+                  sx={{ position: "absolute", top: 0, left: 0 }}
+                  onClick={removeQuestionImage}
+                >
                   <ClearIcon />
                 </IconButton>
               </Grid>
             )}
-            <Grid size={{ xs: 12, sm: questionImage ? 6 : 12 }}>
+            <Grid size={{ xs: 12, sm: questionImage ? 8 : 12 }} sx={{ position: "relative" }}>
               <TextFieldCtrl
                 control={control}
-                label="Question"
+                placeholder="Question"
                 name="q_input_text"
                 minRows={8}
                 multiline
                 noMargin
+                textAlign="center"
               />
+              {!questionImage && (
+                <FileInput
+                  floating
+                  control={control}
+                  name="q_input_image"
+                  text="Add Question Image"
+                  fullWidth
+                  icon={<InsertPhotoIcon />}
+                />
+              )}
             </Grid>
           </Grid>
         </CardContent>
         <CardActions>
-          <Grid container spacing={2}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             {watchAnswer.map((item, index) => (
-              <Grid size={{ xs: 12, md: 12 / 5 }} key={index}>
-                <Card variant="outlined" sx={{ flex: 1, bgcolor: "action.selected" }}>
-                  <CardContent>
-                    {item.image ? (
-                      <Box sx={{ display: "flex", position: "relative", mb: 2 }}>
-                        <img
-                          src={URL.createObjectURL(item.image)}
-                          style={{ width: "100%", objectFit: "contain" }}
-                        />
-                        <IconButton
-                          sx={{ position: "absolute" }}
-                          onClick={() => removeAnswerImage(index)}
-                        >
-                          <ClearIcon />
-                        </IconButton>
-                      </Box>
-                    ) : (
-                      <FileInput
-                        control={control}
-                        name={`answer.${index}.image`}
-                        text="Add Answer Image"
-                        fullWidth
+              <Card
+                variant="outlined"
+                sx={{ bgcolor: "action.selected", display: "flex", alignItems: "end" }}
+                key={index}
+              >
+                <CardContent>
+                  {item.image ? (
+                    <Box sx={{ display: "flex", position: "relative", mb: 2, height: 200 }}>
+                      <img
+                        src={URL.createObjectURL(item.image)}
+                        style={{ width: "100%", height: "100%", objectFit: "contain" }}
                       />
-                    )}
-                    <TextFieldCtrl control={control} name={`answer.${index}.text`} label="Answer" />
-                    <NumericFieldCtrl
+                      <IconButton
+                        sx={{ position: "absolute" }}
+                        onClick={() => removeAnswerImage(index)}
+                      >
+                        <ClearIcon />
+                      </IconButton>
+                    </Box>
+                  ) : (
+                    <FileInput
                       control={control}
-                      name={`answer.${index}.score`}
-                      label="Score"
-                      allowNegative
+                      name={`answer.${index}.image`}
+                      text="Add Answer Image"
+                      fullWidth
+                      icon={<InsertPhotoIcon />}
+                      // passFile={(file) => addAnswerImage(index, file)}
                     />
-                    {fields.length > 2 && <Button onClick={() => remove(index)}>Delete</Button>}
-                  </CardContent>
-                </Card>
-              </Grid>
+                  )}
+                  <TextFieldCtrl
+                    control={control}
+                    name={`answer.${index}.text`}
+                    placeholder="Answer"
+                    textAlign="center"
+                    multiline
+                  />
+                  <NumericFieldCtrl
+                    control={control}
+                    name={`answer.${index}.point`}
+                    label="Point"
+                    allowNegative
+                    maxLength={3}
+                  />
+                  {fields.length > 2 && (
+                    <IconButton color="error" onClick={() => remove(index)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                </CardContent>
+              </Card>
             ))}
             {fields.length !== 5 && (
               <Button
@@ -159,14 +199,14 @@ const CreateQuestion = () => {
                   append({
                     text: "",
                     image: undefined,
-                    score: 0,
+                    point: 0,
                   })
                 }
               >
-                Add
+                <AddCircleIcon />
               </Button>
             )}
-          </Grid>
+          </Box>
         </CardActions>
       </Card>
       <Box textAlign="right">
