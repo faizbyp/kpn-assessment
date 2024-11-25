@@ -13,6 +13,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import SportsScoreIcon from "@mui/icons-material/SportsScore";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import ListIcon from "@mui/icons-material/List";
 import { useEffect, useState } from "react";
 import { AppBar, IconButton, ListSubheader, Toolbar, Typography } from "@mui/material";
@@ -31,10 +32,10 @@ const items = [
       { name: "Business Unit", link: "/admin/bu", icon: <BusinessIcon /> },
       { name: "Terms & PP", link: "/admin/terms-pp", icon: <PolicyIcon /> },
       { name: "Short Brief", link: "/admin/short-brief", icon: <SubjectIcon /> },
-      { name: "Series", link: "/admin/series", icon: <QuestionAnswerIcon /> },
+      { name: "Series", link: "/admin/series", icon: <FormatListNumberedIcon /> },
       { name: "Criteria", link: "/admin/criteria", icon: <SportsScoreIcon /> },
       { name: "Function Menu", link: "/admin/function-menu", icon: <ListIcon /> },
-      { name: "Question", link: "/admin/question", icon: <ListIcon /> },
+      { name: "Question", link: "/admin/question", icon: <QuestionAnswerIcon /> },
     ],
   },
 ];
