@@ -16,6 +16,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import NumericFieldCtrl from "@/components/forms/NumericField";
+import useAPI from "@/hooks/useAPI";
+import { snack } from "@/providers/SnackbarProvider";
+import { isAxiosError } from "axios";
+import { useLoading } from "@/providers/LoadingProvider";
+import useAuthStore from "@/hooks/useAuthStore";
 
 interface AnswerValues {
   text?: string;
@@ -33,6 +38,9 @@ interface QuestionValues {
 }
 
 const CreateQuestion = () => {
+  const API = useAPI();
+  const { showLoading, hideLoading } = useLoading();
+  const user_id = useAuthStore((state) => state.user_id);
   const { control, handleSubmit, watch, setValue } = useForm<QuestionValues>({
     defaultValues: {
       q_seq: 0,
@@ -79,9 +87,56 @@ const CreateQuestion = () => {
     setValue(`answer.${index}.image`, undefined);
   };
 
-  const onSave = (values: QuestionValues) => {
+  const onSubmit = async (values: QuestionValues) => {
     console.log(values);
     console.log(values.q_input_image?.toString());
+    showLoading();
+
+    const formData = new FormData();
+    // Append primitive and non-file properties
+    formData.append("created_by", user_id);
+    formData.append("q_seq", values.q_seq.toString());
+    formData.append("q_layout_type", values.q_layout_type);
+    formData.append("q_input_text", values.q_input_text ? values.q_input_text : "");
+    formData.append("answer_type", values.answer_type);
+
+    // Append the file for `q_input_image`
+    if (values.q_input_image) {
+      formData.append("q_input_image", values.q_input_image);
+    }
+
+    // Serialize and append the `answer` array
+    values.answer.forEach((ans, index) => {
+      if (ans.text) {
+        formData.append(`answer[${index}][text]`, ans.text);
+      }
+      formData.append(`answer[${index}][point]`, ans.point.toString());
+      if (ans.image) {
+        formData.append(`answer[${index}][image]`, ans.image);
+      }
+    });
+    console.log(formData);
+
+    try {
+      const res = await API.post(`/question`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(res);
+      snack.success(`${res.data.message}`);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+        console.error(error.response);
+      } else {
+        snack.error("Error, check log for details");
+        console.error(error);
+      }
+    } finally {
+      hideLoading();
+    }
   };
 
   return (
@@ -210,7 +265,7 @@ const CreateQuestion = () => {
         </CardActions>
       </Card>
       <Box textAlign="right">
-        <Button onClick={handleSubmit(onSave)}>Save</Button>
+        <Button onClick={handleSubmit(onSubmit)}>Save</Button>
       </Box>
     </>
   );
