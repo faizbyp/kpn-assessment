@@ -9,6 +9,7 @@ import {
   Box,
   IconButton,
   CardActions,
+  MenuItem,
 } from "@mui/material";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -21,6 +22,8 @@ import { snack } from "@/providers/SnackbarProvider";
 import { isAxiosError } from "axios";
 import { useLoading } from "@/providers/LoadingProvider";
 import useAuthStore from "@/hooks/useAuthStore";
+import SelectCtrl from "@/components/forms/Select";
+import { useNavigate } from "react-router-dom";
 
 interface AnswerValues {
   text?: string;
@@ -40,8 +43,17 @@ interface QuestionValues {
 const CreateQuestion = () => {
   const API = useAPI();
   const { showLoading, hideLoading } = useLoading();
+  const navigate = useNavigate();
   const user_id = useAuthStore((state) => state.user_id);
-  const { control, handleSubmit, watch, setValue } = useForm<QuestionValues>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm<QuestionValues>({
     defaultValues: {
       q_seq: 0,
       q_layout_type: "",
@@ -49,6 +61,16 @@ const CreateQuestion = () => {
       q_input_image: undefined,
       answer_type: "",
       answer: [
+        {
+          text: "",
+          image: undefined,
+          point: 0,
+        },
+        {
+          text: "",
+          image: undefined,
+          point: 0,
+        },
         {
           text: "",
           image: undefined,
@@ -75,6 +97,17 @@ const CreateQuestion = () => {
   const questionImage = watch("q_input_image");
   const watchAnswer = useWatch({ control, name: "answer" });
 
+  const answerType = [
+    {
+      name: "Single Answer",
+      value: "single",
+    },
+    {
+      name: "Multiple Answer",
+      value: "multiple",
+    },
+  ];
+
   const removeQuestionImage = () => {
     setValue("q_input_image", undefined);
   };
@@ -90,6 +123,35 @@ const CreateQuestion = () => {
   const onSubmit = async (values: QuestionValues) => {
     console.log(values);
     console.log(values.q_input_image?.toString());
+
+    const validAnswers = values.answer.filter((answer) => answer.point > 0);
+    const invalidAnswerIndex = values.answer.findIndex(
+      (answer: AnswerValues) => !answer.text && !answer.image
+    );
+
+    if (invalidAnswerIndex !== -1) {
+      setError("answer", {
+        type: "custom",
+        message: "Each answer must have either text or an image.",
+      });
+      return;
+    }
+    if (values.answer_type === "single" && validAnswers.length < 1) {
+      setError("answer", {
+        type: "custom",
+        message: "At least one answer must have more than 0 points.",
+      });
+      return;
+    }
+    if (values.answer_type === "multiple" && validAnswers.length < 2) {
+      setError("answer", {
+        type: "custom",
+        message: "At least two answers must have more than 0 points.",
+      });
+      return;
+    }
+    clearErrors("answer");
+
     showLoading();
 
     const formData = new FormData();
@@ -125,6 +187,7 @@ const CreateQuestion = () => {
       });
       console.log(res);
       snack.success(`${res.data.message}`);
+      navigate("/admin");
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;
@@ -144,6 +207,24 @@ const CreateQuestion = () => {
       <Typography variant="h2" color="primary">
         New Question
       </Typography>
+
+      <Box sx={{ display: "flex", gap: 2 }}>
+        {/* <NumericFieldCtrl control={control} name="q_seq" label="Sequence" /> */}
+        <SelectCtrl
+          name="answer_type"
+          label="Answer Type"
+          control={control}
+          rules={{
+            required: "Field required",
+          }}
+        >
+          {answerType.map((data) => (
+            <MenuItem key={data.value} value={data.value}>
+              {data.name}
+            </MenuItem>
+          ))}
+        </SelectCtrl>
+      </Box>
 
       <Card raised>
         <CardContent>
@@ -264,8 +345,15 @@ const CreateQuestion = () => {
           </Box>
         </CardActions>
       </Card>
-      <Box textAlign="right">
-        <Button onClick={handleSubmit(onSubmit)}>Save</Button>
+      {errors.answer?.message && (
+        <Typography color="error" mt={4}>
+          {errors.answer.message}
+        </Typography>
+      )}
+      <Box textAlign="right" mt={4}>
+        <Button variant="contained" onClick={handleSubmit(onSubmit)}>
+          Save
+        </Button>
       </Box>
     </>
   );
