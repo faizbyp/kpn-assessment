@@ -57,3 +57,20 @@ export type FMValues = {
   fm_name: string;
   is_active: boolean;
 };
+
+export type AnswerProps = {
+  text?: string;
+  image_url?: string;
+  point?: number;
+};
+
+export type QuestionProps = {
+  question: {
+    seq: number;
+    layout_type: string;
+    input_text: string;
+    input_image_url: string;
+  };
+  answers: Array<{ text?: string; image_url?: string; point: number }>;
+  admin?: boolean;
+};

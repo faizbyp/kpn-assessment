@@ -26,7 +26,17 @@ const Question = () => {
       {
         header: "Question",
         accessorKey: "q_input_text",
-        cell: (props: any) => props.getValue(),
+        cell: (props: any) => (
+          <>
+            {props.getValue() ? (
+              props.getValue()
+            ) : (
+              <Typography color="text.secondary" fontStyle="italic">
+                no text
+              </Typography>
+            )}
+          </>
+        ),
       },
       {
         header: "Question Image",
@@ -61,23 +71,18 @@ const Question = () => {
         header: "Action",
         accessorKey: "id",
         meta: { align: "right" },
-        cell: (props: any) => {
-          // const id = props.getValue();
-          // const bu_name = props.row.original.bu_name;
-
-          return (
-            <>
-              <IconButton
-                onClick={() => alert("laskdja")}
-                aria-label="edit"
-                size="small"
-                edge="end"
-              >
-                <InfoIcon />
-              </IconButton>
-            </>
-          );
-        },
+        cell: (props: any) => (
+          <>
+            <IconButton
+              onClick={() => navigate(`/admin/question/${props.row.original.id}`)}
+              aria-label="edit"
+              size="small"
+              edge="end"
+            >
+              <InfoIcon />
+            </IconButton>
+          </>
+        ),
       },
     ],
     []

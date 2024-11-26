@@ -20,6 +20,7 @@ import Criteria from "./pages/Criteria";
 import FunctionMenu from "./pages/FunctionMenu";
 import Question from "./pages/Question";
 import CreateQuestion from "./pages/CreateQuestion";
+import QuestionDetails from "./pages/QuestionDetails";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
       {
         path: "question",
         element: <Question />,
+      },
+      {
+        path: "question/:id",
+        element: <QuestionDetails />,
       },
       {
         path: "question/create",
