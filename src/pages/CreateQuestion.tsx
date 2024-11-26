@@ -187,7 +187,7 @@ const CreateQuestion = () => {
       });
       console.log(res);
       snack.success(`${res.data.message}`);
-      navigate("/admin");
+      navigate("/admin/question");
     } catch (error) {
       if (isAxiosError(error)) {
         const data = error.response?.data;
