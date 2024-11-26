@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import useAPI from "./useAPI";
+import { snack } from "@/providers/SnackbarProvider";
 
 interface FetchState<T> {
   data: T | null;
@@ -24,6 +25,7 @@ const useFetch = <T,>(url: string): FetchState<T> => {
     } catch (error) {
       setError(error);
       console.error(error);
+      snack.error("Fetch Error", true);
     } finally {
       setLoading(false);
     }
