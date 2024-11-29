@@ -99,7 +99,7 @@ const TermsPP = () => {
         <Grid size={{ xs: 12, md: 6 }}>
           {termsPP ? (
             <>
-              <TextFieldCtrl name="terms" label="Terms" control={control} multiline rows={6} />
+              <TextFieldCtrl name="terms" label="Terms" control={control} multiline minRows={6} />
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Typography color="text.secondary">
                   Last update: {termsPP && termsPP.data.terms.updated_date}
@@ -125,7 +125,7 @@ const TermsPP = () => {
                 label="Privacy Policy"
                 control={control}
                 multiline
-                rows={6}
+                minRows={6}
               />
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Typography color="text.secondary">
