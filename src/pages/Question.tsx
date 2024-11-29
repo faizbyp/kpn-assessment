@@ -6,6 +6,7 @@ import StandardTable from "@/components/StandardTable";
 import { TableSkeleton } from "@/components/Skeleton";
 import { useMemo } from "react";
 import InfoIcon from "@mui/icons-material/Info";
+import { truncateText } from "@/utils/constant";
 
 const Question = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const Question = () => {
         cell: (props: any) => (
           <>
             {props.getValue() ? (
-              props.getValue()
+              truncateText(props.getValue(), 100)
             ) : (
               <Typography color="text.secondary" fontStyle="italic">
                 no text
