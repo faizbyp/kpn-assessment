@@ -46,7 +46,7 @@ const Question = () => {
             {props.getValue() ? (
               <img
                 height={100}
-                src={`http://localhost:5000/api/static/question/${props.getValue()}`}
+                src={`${import.meta.env.VITE_API_URL}/static/question/${props.getValue()}`}
                 alt="Cannot load image"
               />
             ) : (
