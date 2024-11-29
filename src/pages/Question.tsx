@@ -126,7 +126,17 @@ const Question = () => {
       {
         header: "Answer",
         accessorKey: "text",
-        cell: (props: any) => props.getValue(),
+        cell: (props: any) => (
+          <>
+            {props.getValue() ? (
+              truncateText(props.getValue(), 100)
+            ) : (
+              <Typography color="text.secondary" fontStyle="italic">
+                no text
+              </Typography>
+            )}
+          </>
+        ),
       },
       {
         header: "Answer Image",
