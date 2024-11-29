@@ -25,6 +25,8 @@ import useAuthStore from "@/hooks/useAuthStore";
 import SelectCtrl from "@/components/forms/Select";
 import { useNavigate } from "react-router-dom";
 import { allowedImageFormat } from "@/utils/constant";
+import DialogComp from "@/components/Dialog";
+import useDialog from "@/hooks/useDialog";
 
 interface AnswerValues {
   text?: string;
@@ -37,7 +39,7 @@ interface QuestionValues {
   q_layout_type: string;
   q_input_text?: string;
   q_input_image?: File;
-  answer_type: string;
+  answer_type: "single" | "multiple";
   answer: AnswerValues[];
 }
 
@@ -46,21 +48,22 @@ const CreateQuestion = () => {
   const { showLoading, hideLoading } = useLoading();
   const navigate = useNavigate();
   const user_id = useAuthStore((state) => state.user_id);
+  const { isOpen, open, close } = useDialog();
   const {
     control,
     handleSubmit,
     watch,
     setValue,
-    setError,
-    clearErrors,
     formState: { errors },
+    getValues,
+    trigger,
   } = useForm<QuestionValues>({
     defaultValues: {
       q_seq: 0,
       q_layout_type: "",
       q_input_text: "",
       q_input_image: undefined,
-      answer_type: "",
+      answer_type: undefined,
       answer: [
         {
           text: "",
@@ -92,11 +95,45 @@ const CreateQuestion = () => {
     rules: {
       minLength: 2,
       maxLength: 5,
+      validate: (): string | true => validateAnswers(getValues("answer"), getValues("answer_type")),
     },
   });
 
   const questionImage = watch("q_input_image");
   const watchAnswer = useWatch({ control, name: "answer" });
+
+  const validateAnswers = (
+    answers: AnswerValues[],
+    answerType: "single" | "multiple"
+  ): string | true => {
+    const validAnswers = answers.filter((answer) => answer.point > 0);
+
+    if (answers.findIndex((answer) => !answer.text && !answer.image) !== -1) {
+      return "Each answer must have either text or an image.";
+    }
+
+    if (answerType === "single" && validAnswers.length !== 1) {
+      return "Exact one answer must have more than 0 points.";
+    }
+
+    if (answerType === "multiple" && validAnswers.length < 2) {
+      return "At least two answers must have more than 0 points.";
+    }
+
+    if (answers.findIndex((answer) => answer.image?.size && answer.image?.size > 10485760) !== -1) {
+      return "Max 10MB file allowed.";
+    }
+
+    if (
+      answers.findIndex(
+        (answer) => answer.image && !allowedImageFormat.includes(answer.image.type)
+      ) !== -1
+    ) {
+      return "File formats not allowed.";
+    }
+
+    return true;
+  };
 
   const answerType = [
     {
@@ -123,47 +160,6 @@ const CreateQuestion = () => {
 
   const onSubmit = async (values: QuestionValues) => {
     console.log(values);
-
-    const validAnswers = values.answer.filter((answer) => answer.point > 0);
-    const validations = [
-      {
-        condition:
-          values.answer.findIndex((answer: AnswerValues) => !answer.text && !answer.image) !== -1,
-        error: { type: "custom", message: "Each answer must have either text or an image." },
-      },
-      {
-        condition: values.answer_type === "single" && validAnswers.length !== 1,
-        error: { type: "custom", message: "Only one answer must have more than 0 points." },
-      },
-      {
-        condition: values.answer_type === "multiple" && validAnswers.length < 2,
-        error: { type: "custom", message: "At least two answers must have more than 0 points." },
-      },
-      {
-        condition:
-          values.answer.findIndex(
-            (answer: AnswerValues) => answer.image && answer.image.size > 10485760
-          ) !== -1,
-        error: { type: "custom", message: "Max 10MB file allowed" },
-      },
-      {
-        condition:
-          values.answer.findIndex(
-            (answer: AnswerValues) =>
-              answer.image && !allowedImageFormat.includes(answer.image.type)
-          ) !== -1,
-        error: { type: "custom", message: "File formats not allowed" },
-      },
-    ];
-
-    for (const validation of validations) {
-      if (validation.condition) {
-        setError("answer", validation.error);
-        return;
-      }
-    }
-    clearErrors("answer");
-
     showLoading();
 
     const formData = new FormData();
@@ -359,16 +355,40 @@ const CreateQuestion = () => {
           </Box>
         </CardActions>
       </Card>
-      {errors.answer?.message && (
-        <Typography color="error" mt={4}>
-          {errors.answer.message}
+      {errors.answer?.root && (
+        <Typography color="error" mt={4} mx={2}>
+          {errors.answer.root.message}
         </Typography>
       )}
       <Box textAlign="right" mt={4}>
-        <Button variant="contained" onClick={handleSubmit(onSubmit)}>
+        <Button
+          variant="contained"
+          onClick={async () => {
+            const valid = await trigger();
+            if (valid) open();
+          }}
+        >
           Save
         </Button>
       </Box>
+
+      <DialogComp
+        title="Create Question"
+        open={isOpen}
+        onClose={close}
+        actions={
+          <>
+            <Button onClick={close} variant="outlined" color="error">
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit(onSubmit)} variant="contained" color="error">
+              Create
+            </Button>
+          </>
+        }
+      >
+        <Typography>{`Are you sure you want to create question?`}</Typography>
+      </DialogComp>
     </>
   );
 };
