@@ -14,6 +14,7 @@ interface FileInputProps {
   floating?: boolean;
   icon?: ReactNode;
   passFile?: (file: File) => void;
+  accept?: string;
 }
 
 const FileInput = ({
@@ -28,6 +29,7 @@ const FileInput = ({
   floating,
   icon,
   passFile,
+  accept,
 }: FileInputProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null); // Create a ref to the input
 
@@ -41,7 +43,7 @@ const FileInput = ({
           <Box display="flex" alignItems="center">
             <input
               type="file"
-              // accept="image/*"
+              accept={accept}
               onChange={(e: ChangeEvent<HTMLInputElement> | null) => {
                 if (!e || !e.target.files) return;
                 onChange(e.target.files[0]); // Set the file object
