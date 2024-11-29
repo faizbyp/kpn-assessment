@@ -24,6 +24,7 @@ import { useLoading } from "@/providers/LoadingProvider";
 import useAuthStore from "@/hooks/useAuthStore";
 import SelectCtrl from "@/components/forms/Select";
 import { useNavigate } from "react-router-dom";
+import { allowedImageFormat } from "@/utils/constant";
 
 interface AnswerValues {
   text?: string;
@@ -122,33 +123,44 @@ const CreateQuestion = () => {
 
   const onSubmit = async (values: QuestionValues) => {
     console.log(values);
-    console.log(values.q_input_image?.toString());
 
     const validAnswers = values.answer.filter((answer) => answer.point > 0);
-    const invalidAnswerIndex = values.answer.findIndex(
-      (answer: AnswerValues) => !answer.text && !answer.image
-    );
+    const validations = [
+      {
+        condition:
+          values.answer.findIndex((answer: AnswerValues) => !answer.text && !answer.image) !== -1,
+        error: { type: "custom", message: "Each answer must have either text or an image." },
+      },
+      {
+        condition: values.answer_type === "single" && validAnswers.length !== 1,
+        error: { type: "custom", message: "Only one answer must have more than 0 points." },
+      },
+      {
+        condition: values.answer_type === "multiple" && validAnswers.length < 2,
+        error: { type: "custom", message: "At least two answers must have more than 0 points." },
+      },
+      {
+        condition:
+          values.answer.findIndex(
+            (answer: AnswerValues) => answer.image && answer.image.size > 10485760
+          ) !== -1,
+        error: { type: "custom", message: "Max 10MB file allowed" },
+      },
+      {
+        condition:
+          values.answer.findIndex(
+            (answer: AnswerValues) =>
+              answer.image && !allowedImageFormat.includes(answer.image.type)
+          ) !== -1,
+        error: { type: "custom", message: "File formats not allowed" },
+      },
+    ];
 
-    if (invalidAnswerIndex !== -1) {
-      setError("answer", {
-        type: "custom",
-        message: "Each answer must have either text or an image.",
-      });
-      return;
-    }
-    if (values.answer_type === "single" && validAnswers.length < 1) {
-      setError("answer", {
-        type: "custom",
-        message: "At least one answer must have more than 0 points.",
-      });
-      return;
-    }
-    if (values.answer_type === "multiple" && validAnswers.length < 2) {
-      setError("answer", {
-        type: "custom",
-        message: "At least two answers must have more than 0 points.",
-      });
-      return;
+    for (const validation of validations) {
+      if (validation.condition) {
+        setError("answer", validation.error);
+        return;
+      }
     }
     clearErrors("answer");
 
@@ -269,6 +281,7 @@ const CreateQuestion = () => {
                   text="Add Question Image"
                   fullWidth
                   icon={<InsertPhotoIcon />}
+                  accept="image/*"
                 />
               )}
             </Grid>
@@ -304,6 +317,7 @@ const CreateQuestion = () => {
                       fullWidth
                       icon={<InsertPhotoIcon />}
                       // passFile={(file) => addAnswerImage(index, file)}
+                      accept="image/*"
                     />
                   )}
                   <TextFieldCtrl
