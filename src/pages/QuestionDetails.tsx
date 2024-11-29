@@ -6,7 +6,7 @@ import useDialog from "@/hooks/useDialog";
 import useFetch from "@/hooks/useFetch";
 import { useLoading } from "@/providers/LoadingProvider";
 import { snack } from "@/providers/SnackbarProvider";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Container, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -42,28 +42,26 @@ const QuestionDetails = () => {
 
   return (
     <>
-      <Box sx={{ mb: 4 }}>
-        <Typography color="primary" variant="h1">
-          Question Details
-        </Typography>
-        <Typography color="text.secondary">{id}</Typography>
-        <Typography>Created by: {question?.created_by}</Typography>
-      </Box>
+      <Container maxWidth="lg">
+        <Box sx={{ mb: 2, display: "flex", gap: 2, justifyContent: "space-between" }}>
+          <Typography color="primary" fontWeight="bold" component="h1">
+            Question Details
+          </Typography>
+          <Typography fontWeight="bold">Total Points: {question?.total_points}</Typography>
+        </Box>
 
-      {question ? (
-        <QuestionAnswer question={question.question} answers={question.answers} />
-      ) : (
-        <QuestionSkeleton />
-      )}
+        {question ? (
+          <QuestionAnswer question={question.question} answers={question.answers} />
+        ) : (
+          <QuestionSkeleton />
+        )}
 
-      <Box sx={{ my: 8 }}>
-        <Typography variant="h2" color="error">
-          DANGER ZONE
-        </Typography>
-        <Button variant="contained" color="error" sx={{ mt: 1 }} onClick={openDelete}>
-          Delete Question
-        </Button>
-      </Box>
+        <Box sx={{ my: 2 }}>
+          <Button variant="contained" color="error" sx={{ mt: 1 }} onClick={openDelete}>
+            Delete Question
+          </Button>
+        </Box>
+      </Container>
 
       <DialogComp
         title={`Delete Question`}

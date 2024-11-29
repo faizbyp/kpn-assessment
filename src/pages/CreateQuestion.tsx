@@ -10,6 +10,7 @@ import {
   IconButton,
   CardActions,
   MenuItem,
+  Container,
 } from "@mui/material";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -212,165 +213,167 @@ const CreateQuestion = () => {
 
   return (
     <>
-      <Typography variant="h2" color="primary">
-        New Question
-      </Typography>
-
-      <Box sx={{ display: "flex", gap: 2 }}>
-        {/* <NumericFieldCtrl control={control} name="q_seq" label="Sequence" /> */}
-        <SelectCtrl
-          name="answer_type"
-          label="Answer Type"
-          control={control}
-          rules={{
-            required: "Field required",
-          }}
-        >
-          {answerType.map((data) => (
-            <MenuItem key={data.value} value={data.value}>
-              {data.name}
-            </MenuItem>
-          ))}
-        </SelectCtrl>
-      </Box>
-
-      <Card raised>
-        <CardContent>
-          <Grid container spacing={2} alignItems="end">
-            {questionImage && (
-              <Grid
-                size={{ xs: 12, sm: 4 }}
-                sx={{
-                  display: "flex",
-                  position: "relative",
-                  height: 300,
-                  justifyContent: "center",
-                }}
-              >
-                <img
-                  src={URL.createObjectURL(questionImage)}
-                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                />
-                <IconButton
-                  sx={{ position: "absolute", top: 0, left: 0 }}
-                  onClick={removeQuestionImage}
-                >
-                  <ClearIcon />
-                </IconButton>
-              </Grid>
-            )}
-            <Grid size={{ xs: 12, sm: questionImage ? 8 : 12 }} sx={{ position: "relative" }}>
-              <TextFieldCtrl
-                control={control}
-                placeholder="Question"
-                name="q_input_text"
-                minRows={8}
-                multiline
-                noMargin
-                textAlign="center"
-              />
-              {!questionImage && (
-                <FileInput
-                  floating
-                  control={control}
-                  name="q_input_image"
-                  text="Add Question Image"
-                  fullWidth
-                  icon={<InsertPhotoIcon />}
-                  accept="image/*"
-                />
-              )}
-            </Grid>
-          </Grid>
-        </CardContent>
-        <CardActions>
-          <Box sx={{ display: "flex", gap: 2 }}>
-            {watchAnswer.map((item, index) => (
-              <Card
-                variant="outlined"
-                sx={{ bgcolor: "action.selected", display: "flex", alignItems: "end" }}
-                key={index}
-              >
-                <CardContent>
-                  {item.image ? (
-                    <Box sx={{ display: "flex", position: "relative", mb: 2, height: 200 }}>
-                      <img
-                        src={URL.createObjectURL(item.image)}
-                        style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                      />
-                      <IconButton
-                        sx={{ position: "absolute" }}
-                        onClick={() => removeAnswerImage(index)}
-                      >
-                        <ClearIcon />
-                      </IconButton>
-                    </Box>
-                  ) : (
-                    <FileInput
-                      control={control}
-                      name={`answer.${index}.image`}
-                      text="Add Answer Image"
-                      fullWidth
-                      icon={<InsertPhotoIcon />}
-                      // passFile={(file) => addAnswerImage(index, file)}
-                      accept="image/*"
-                    />
-                  )}
-                  <TextFieldCtrl
-                    control={control}
-                    name={`answer.${index}.text`}
-                    placeholder="Answer"
-                    textAlign="center"
-                    multiline
-                  />
-                  <NumericFieldCtrl
-                    control={control}
-                    name={`answer.${index}.point`}
-                    label="Point"
-                    allowNegative
-                    maxLength={3}
-                  />
-                  {fields.length > 2 && (
-                    <IconButton color="error" onClick={() => remove(index)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-            {fields.length !== 5 && (
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  append({
-                    text: "",
-                    image: undefined,
-                    point: 0,
-                  })
-                }
-              >
-                <AddCircleIcon />
-              </Button>
-            )}
-          </Box>
-        </CardActions>
-      </Card>
-      {errors.answer?.root && (
-        <Typography color="error" mt={4} mx={2}>
-          {errors.answer.root.message}
+      <Container maxWidth="lg">
+        <Typography variant="h2" color="primary">
+          New Question
         </Typography>
-      )}
-      <Box textAlign="right" mt={4}>
-        <Button
-          variant="contained"
-          onClick={async () => {
-            const valid = await trigger();
-            if (valid) open();
-          }}
-        >
-          Save
-        </Button>
-      </Box>
+
+        <Box sx={{ display: "flex", gap: 2 }}>
+          {/* <NumericFieldCtrl control={control} name="q_seq" label="Sequence" /> */}
+          <SelectCtrl
+            name="answer_type"
+            label="Answer Type"
+            control={control}
+            rules={{
+              required: "Field required",
+            }}
+          >
+            {answerType.map((data) => (
+              <MenuItem key={data.value} value={data.value}>
+                {data.name}
+              </MenuItem>
+            ))}
+          </SelectCtrl>
+        </Box>
+
+        <Card raised>
+          <CardContent>
+            <Grid container spacing={2} alignItems="end">
+              {questionImage && (
+                <Grid
+                  size={{ xs: 12, sm: 4 }}
+                  sx={{
+                    display: "flex",
+                    position: "relative",
+                    height: 300,
+                    justifyContent: "center",
+                  }}
+                >
+                  <img
+                    src={URL.createObjectURL(questionImage)}
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                  />
+                  <IconButton
+                    sx={{ position: "absolute", top: 0, left: 0 }}
+                    onClick={removeQuestionImage}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </Grid>
+              )}
+              <Grid size={{ xs: 12, sm: questionImage ? 8 : 12 }} sx={{ position: "relative" }}>
+                <TextFieldCtrl
+                  control={control}
+                  placeholder="Question"
+                  name="q_input_text"
+                  minRows={8}
+                  multiline
+                  noMargin
+                  textAlign="center"
+                />
+                {!questionImage && (
+                  <FileInput
+                    floating
+                    control={control}
+                    name="q_input_image"
+                    text="Add Question Image"
+                    fullWidth
+                    icon={<InsertPhotoIcon />}
+                    accept="image/*"
+                  />
+                )}
+              </Grid>
+            </Grid>
+          </CardContent>
+          <CardActions>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              {watchAnswer.map((item, index) => (
+                <Card
+                  variant="outlined"
+                  sx={{ bgcolor: "action.selected", display: "flex", alignItems: "end" }}
+                  key={index}
+                >
+                  <CardContent>
+                    {item.image ? (
+                      <Box sx={{ display: "flex", position: "relative", mb: 2, height: 200 }}>
+                        <img
+                          src={URL.createObjectURL(item.image)}
+                          style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                        />
+                        <IconButton
+                          sx={{ position: "absolute" }}
+                          onClick={() => removeAnswerImage(index)}
+                        >
+                          <ClearIcon />
+                        </IconButton>
+                      </Box>
+                    ) : (
+                      <FileInput
+                        control={control}
+                        name={`answer.${index}.image`}
+                        text="Add Answer Image"
+                        fullWidth
+                        icon={<InsertPhotoIcon />}
+                        // passFile={(file) => addAnswerImage(index, file)}
+                        accept="image/*"
+                      />
+                    )}
+                    <TextFieldCtrl
+                      control={control}
+                      name={`answer.${index}.text`}
+                      placeholder="Answer"
+                      textAlign="center"
+                      multiline
+                    />
+                    <NumericFieldCtrl
+                      control={control}
+                      name={`answer.${index}.point`}
+                      label="Point"
+                      allowNegative
+                      maxLength={3}
+                    />
+                    {fields.length > 2 && (
+                      <IconButton color="error" onClick={() => remove(index)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+              {fields.length !== 5 && (
+                <Button
+                  variant="outlined"
+                  onClick={() =>
+                    append({
+                      text: "",
+                      image: undefined,
+                      point: 0,
+                    })
+                  }
+                >
+                  <AddCircleIcon />
+                </Button>
+              )}
+            </Box>
+          </CardActions>
+        </Card>
+        {errors.answer?.root && (
+          <Typography color="error" mt={4} mx={2}>
+            {errors.answer.root.message}
+          </Typography>
+        )}
+        <Box textAlign="right" mt={4}>
+          <Button
+            variant="contained"
+            onClick={async () => {
+              const valid = await trigger();
+              if (valid) open();
+            }}
+          >
+            Save
+          </Button>
+        </Box>
+      </Container>
 
       <DialogComp
         title="Create Question"

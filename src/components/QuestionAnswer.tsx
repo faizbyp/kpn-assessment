@@ -6,14 +6,14 @@ const QuestionAnswer = ({ question, answers }: QuestionProps) => {
   return (
     <Card raised>
       <CardContent>
-        <Grid container spacing={2} alignItems="end">
+        <Grid container spacing={2} alignItems="center">
           {question.input_image_url && (
             <Grid
               size={{ xs: 12, sm: 4 }}
               sx={{
                 display: "flex",
                 position: "relative",
-                height: 300,
+                height: 220,
                 justifyContent: "center",
               }}
             >
@@ -31,7 +31,7 @@ const QuestionAnswer = ({ question, answers }: QuestionProps) => {
               <Box
                 sx={{
                   display: "flex",
-                  height: 300,
+                  minHeight: 220,
                   justifyContent: "center",
                   alignItems: "center",
                 }}
