@@ -47,7 +47,7 @@ const Question = () => {
               <img
                 height={100}
                 src={`http://localhost:5000/api/static/question/${props.getValue()}`}
-                alt={props.row.original.q_input_text || "Cannot load image"}
+                alt="Cannot load image"
               />
             ) : (
               <Typography color="text.secondary" fontStyle="italic">
