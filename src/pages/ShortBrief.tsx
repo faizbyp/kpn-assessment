@@ -73,7 +73,7 @@ const ShortBrief = () => {
                 label="Brief"
                 control={control}
                 multiline
-                rows={6}
+                minRows={6}
               />
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Typography color="text.secondary">
