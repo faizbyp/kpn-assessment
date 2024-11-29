@@ -4,15 +4,26 @@ import { useNavigate } from "react-router-dom";
 import useFetch from "@/hooks/useFetch";
 import StandardTable from "@/components/StandardTable";
 import { TableSkeleton } from "@/components/Skeleton";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import InfoIcon from "@mui/icons-material/Info";
 import { truncateText } from "@/utils/constant";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import useAPI from "@/hooks/useAPI";
+import { isAxiosError } from "axios";
+import { snack } from "@/providers/SnackbarProvider";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useLoading } from "@/providers/LoadingProvider";
+import useDialog from "@/hooks/useDialog";
+import DialogComp from "@/components/Dialog";
 
 const Question = () => {
+  const API = useAPI();
   const navigate = useNavigate();
-  const { data: question } = useFetch<any>("/question");
+  const { data: question, refetch } = useFetch<any>("/question");
+  const [selected, setSelected] = useState("");
+  const { showLoading, hideLoading } = useLoading();
+  const { open, isOpen, close } = useDialog();
 
   const columns: any = useMemo(
     () => [
@@ -85,7 +96,16 @@ const Question = () => {
         accessorKey: "id",
         meta: { align: "right" },
         cell: (props: any) => (
-          <>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <IconButton
+              onClick={() => handleOpen(props.row.original.id)}
+              aria-label="edit"
+              size="small"
+              edge="end"
+              color="error"
+            >
+              <DeleteIcon />
+            </IconButton>
             <IconButton
               onClick={() => navigate(`/admin/question/${props.row.original.id}`)}
               aria-label="edit"
@@ -94,7 +114,7 @@ const Question = () => {
             >
               <InfoIcon />
             </IconButton>
-          </>
+          </Box>
         ),
       },
     ],
@@ -136,6 +156,33 @@ const Question = () => {
     []
   );
 
+  const handleOpen = (id: string) => {
+    setSelected(id);
+    open();
+  };
+
+  const handleDelete = async () => {
+    showLoading();
+    const url = `/question/${selected}`;
+
+    try {
+      const res = await API.delete(url);
+      snack.success(`${res.data.message}`);
+      refetch();
+    } catch (error) {
+      if (isAxiosError(error)) {
+        const data = error.response?.data;
+        snack.error(data.message);
+      } else {
+        snack.error("Error");
+      }
+      console.error(error);
+    } finally {
+      close();
+      hideLoading();
+    }
+  };
+
   const answerTable = ({ row }: { row: any }) => {
     return (
       <>
@@ -163,6 +210,24 @@ const Question = () => {
       ) : (
         <TableSkeleton column={4} row={2} small />
       )}
+
+      <DialogComp
+        title={`Delete Question`}
+        open={isOpen}
+        onClose={close}
+        actions={
+          <>
+            <Button onClick={close} variant="outlined" color="error">
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} variant="contained" color="error">
+              Delete
+            </Button>
+          </>
+        }
+      >
+        <Typography>{`Are you sure you want to delete this question?`}</Typography>
+      </DialogComp>
     </>
   );
 };
