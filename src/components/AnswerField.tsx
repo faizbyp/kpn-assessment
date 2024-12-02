@@ -15,9 +15,15 @@ interface AnswerFieldProps {
   control: any;
   setValue: any;
   getValues: any;
+  id?: string;
 }
 
-const AnswerField = memo(function AnswerField({ control, setValue, getValues }: AnswerFieldProps) {
+const AnswerField = memo(function AnswerField({
+  control,
+  setValue,
+  getValues,
+  id,
+}: AnswerFieldProps) {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "answer",
@@ -69,11 +75,12 @@ const AnswerField = memo(function AnswerField({ control, setValue, getValues }: 
   const addAnswerImage = (index: number, image: File) => {
     const objectUrl = URL.createObjectURL(image);
     setValue(`answer.${index}.image`, image);
-    setValue(`answer.${index}.imageUrl`, objectUrl);
+    setValue(`answer.${index}.image_url`, objectUrl);
   };
 
   const removeAnswerImage = (index: number) => {
     setValue(`answer.${index}.image`, undefined);
+    setValue(`answer.${index}.image_url`, undefined);
   };
 
   return (
@@ -85,10 +92,14 @@ const AnswerField = memo(function AnswerField({ control, setValue, getValues }: 
           key={index}
         >
           <CardContent>
-            {item.image ? (
+            {item.image || item.image_url ? (
               <Box sx={{ display: "flex", position: "relative", mb: 2, height: 200 }}>
                 <img
-                  src={item.imageUrl}
+                  src={
+                    item.image_url && item.image_url.split("/")[0] === id
+                      ? `${import.meta.env.VITE_API_URL}/static/question/${item.image_url}`
+                      : item.image_url
+                  }
                   style={{ width: "100%", height: "100%", objectFit: "contain" }}
                 />
                 <IconButton sx={{ position: "absolute" }} onClick={() => removeAnswerImage(index)}>

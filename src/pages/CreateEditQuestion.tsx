@@ -31,7 +31,7 @@ import AnswerField from "@/components/AnswerField";
 export interface AnswerValues {
   text?: string;
   image?: File;
-  imageUrl?: string;
+  image_url?: string;
   point: number;
 }
 
@@ -40,7 +40,8 @@ interface QuestionValues {
   q_layout_type: string;
   q_input_text?: string;
   q_input_image?: File;
-  answer_type: "single" | "multiple";
+  q_input_image_url?: string;
+  answer_type: string;
   answer: AnswerValues[];
 }
 
@@ -69,7 +70,7 @@ const CreateEditQuestion = () => {
       q_layout_type: "",
       q_input_text: "",
       q_input_image: undefined,
-      answer_type: undefined,
+      answer_type: "",
       answer: [
         {
           text: "",
@@ -102,7 +103,7 @@ const CreateEditQuestion = () => {
         q_seq: data.question.seq,
         q_layout_type: data.question.layout_type,
         q_input_text: data.question.input_text,
-        q_input_image: data.question.input_image,
+        q_input_image_url: data.question.input_image_url,
         answer_type: data.answer_type,
         answer: data.answers,
       });
@@ -110,6 +111,7 @@ const CreateEditQuestion = () => {
   }, [id, question]);
 
   const questionImage = watch("q_input_image");
+  const questionImageUrl = watch("q_input_image_url");
 
   const answerType = [
     {
@@ -124,11 +126,8 @@ const CreateEditQuestion = () => {
 
   const removeQuestionImage = () => {
     setValue("q_input_image", undefined);
+    setValue("q_input_image_url", undefined);
   };
-
-  // const addAnswerImage = (index: number, image: File) => {
-  //   setValue(`answer.${index}.image`, image);
-  // };
 
   const onSubmit = async (values: QuestionValues) => {
     console.log(values);
@@ -190,7 +189,6 @@ const CreateEditQuestion = () => {
         </Typography>
 
         <Box sx={{ display: "flex", gap: 2 }}>
-          {/* <NumericFieldCtrl control={control} name="q_seq" label="Sequence" /> */}
           <SelectCtrl
             name="answer_type"
             label="Answer Type"
@@ -210,7 +208,7 @@ const CreateEditQuestion = () => {
         <Card raised>
           <CardContent>
             <Grid container spacing={2} alignItems="end">
-              {questionImage && (
+              {(isEdit ? questionImageUrl : questionImage) && (
                 <Grid
                   size={{ xs: 12, sm: 4 }}
                   sx={{
@@ -221,7 +219,11 @@ const CreateEditQuestion = () => {
                   }}
                 >
                   <img
-                    src={URL.createObjectURL(questionImage)}
+                    src={
+                      isEdit
+                        ? `${import.meta.env.VITE_API_URL}/static/question/${questionImageUrl}`
+                        : questionImage && URL.createObjectURL(questionImage)
+                    }
                     style={{ width: "100%", height: "100%", objectFit: "contain" }}
                   />
                   <IconButton
@@ -232,7 +234,10 @@ const CreateEditQuestion = () => {
                   </IconButton>
                 </Grid>
               )}
-              <Grid size={{ xs: 12, sm: questionImage ? 8 : 12 }} sx={{ position: "relative" }}>
+              <Grid
+                size={{ xs: 12, sm: questionImage || questionImageUrl ? 8 : 12 }}
+                sx={{ position: "relative" }}
+              >
                 <TextFieldCtrl
                   control={control}
                   placeholder="Question"
@@ -242,7 +247,7 @@ const CreateEditQuestion = () => {
                   noMargin
                   textAlign="center"
                 />
-                {!questionImage && (
+                {!questionImage && !questionImageUrl && (
                   <FileInput
                     floating
                     control={control}
@@ -257,7 +262,7 @@ const CreateEditQuestion = () => {
             </Grid>
           </CardContent>
           <CardActions>
-            <AnswerField control={control} setValue={setValue} getValues={getValues} />
+            <AnswerField control={control} setValue={setValue} getValues={getValues} id={id} />
           </CardActions>
         </Card>
         {errors.answer?.root && (
