@@ -15,6 +15,7 @@ interface FileInputProps {
   icon?: ReactNode;
   passFile?: (file: File) => void;
   accept?: string;
+  onChangeOvr?: any;
 }
 
 const FileInput = ({
@@ -30,6 +31,7 @@ const FileInput = ({
   icon,
   passFile,
   accept,
+  onChangeOvr,
 }: FileInputProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null); // Create a ref to the input
 
@@ -45,9 +47,13 @@ const FileInput = ({
               type="file"
               accept={accept}
               onChange={(e: ChangeEvent<HTMLInputElement> | null) => {
-                if (!e || !e.target.files) return;
-                onChange(e.target.files[0]); // Set the file object
-                passFile && passFile(e.target.files[0]);
+                if (onChangeOvr) {
+                  onChangeOvr(e);
+                } else {
+                  if (!e || !e.target.files) return;
+                  onChange(e.target.files[0]); // Set the file object
+                  passFile && passFile(e.target.files[0]);
+                }
               }}
               onBlur={onBlur}
               ref={inputRef}

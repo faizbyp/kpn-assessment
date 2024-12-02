@@ -1,0 +1,148 @@
+import FileInput from "@/components/forms/FileInput";
+import TextFieldCtrl from "@/components/forms/TextField";
+import { Button, Card, CardContent, Box, IconButton } from "@mui/material";
+import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ClearIcon from "@mui/icons-material/Clear";
+import { useFieldArray, useWatch } from "react-hook-form";
+import NumericFieldCtrl from "@/components/forms/NumericField";
+import { allowedImageFormat } from "@/utils/constant";
+import { memo } from "react";
+import { AnswerValues } from "@/pages/CreateEditQuestion";
+
+interface AnswerFieldProps {
+  control: any;
+  setValue: any;
+  getValues: any;
+}
+
+const AnswerField = memo(function AnswerField({ control, setValue, getValues }: AnswerFieldProps) {
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "answer",
+    rules: {
+      minLength: 2,
+      maxLength: 5,
+      validate: (): string | true => validateAnswers(getValues("answer"), getValues("answer_type")),
+    },
+  });
+
+  const watchAnswer = useWatch({
+    control,
+    name: "answer",
+  });
+
+  const validateAnswers = (
+    answers: AnswerValues[],
+    answerType: "single" | "multiple"
+  ): string | true => {
+    const validAnswers = answers.filter((answer) => answer.point > 0);
+
+    if (answers.findIndex((answer) => !answer.text && !answer.image) !== -1) {
+      return "Each answer must have either text or an image.";
+    }
+
+    if (answerType === "single" && validAnswers.length !== 1) {
+      return "Exact one answer must have more than 0 points.";
+    }
+
+    if (answerType === "multiple" && validAnswers.length < 2) {
+      return "At least two answers must have more than 0 points.";
+    }
+
+    if (answers.findIndex((answer) => answer.image?.size && answer.image?.size > 10485760) !== -1) {
+      return "Max 10MB file allowed.";
+    }
+
+    if (
+      answers.findIndex(
+        (answer) => answer.image && !allowedImageFormat.includes(answer.image.type)
+      ) !== -1
+    ) {
+      return "File formats not allowed.";
+    }
+
+    return true;
+  };
+
+  const addAnswerImage = (index: number, image: File) => {
+    const objectUrl = URL.createObjectURL(image);
+    setValue(`answer.${index}.image`, image);
+    setValue(`answer.${index}.imageUrl`, objectUrl);
+  };
+
+  const removeAnswerImage = (index: number) => {
+    setValue(`answer.${index}.image`, undefined);
+  };
+
+  return (
+    <Box sx={{ display: "flex", gap: 2 }}>
+      {watchAnswer.map((item: AnswerValues, index: number) => (
+        <Card
+          variant="outlined"
+          sx={{ bgcolor: "action.selected", display: "flex", alignItems: "end" }}
+          key={index}
+        >
+          <CardContent>
+            {item.image ? (
+              <Box sx={{ display: "flex", position: "relative", mb: 2, height: 200 }}>
+                <img
+                  src={item.imageUrl}
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                />
+                <IconButton sx={{ position: "absolute" }} onClick={() => removeAnswerImage(index)}>
+                  <ClearIcon />
+                </IconButton>
+              </Box>
+            ) : (
+              <FileInput
+                control={control}
+                name={`answer.${index}.image`}
+                text="Add Answer Image"
+                fullWidth
+                icon={<InsertPhotoIcon />}
+                accept="image/*"
+                passFile={(file) => addAnswerImage(index, file)}
+              />
+            )}
+            <TextFieldCtrl
+              control={control}
+              name={`answer.${index}.text`}
+              placeholder="Answer"
+              textAlign="center"
+              multiline
+            />
+            <NumericFieldCtrl
+              control={control}
+              name={`answer.${index}.point`}
+              label="Point"
+              allowNegative
+              maxLength={3}
+            />
+            {fields.length > 2 && (
+              <IconButton color="error" onClick={() => remove(index)}>
+                <DeleteIcon />
+              </IconButton>
+            )}
+          </CardContent>
+        </Card>
+      ))}
+      {fields.length !== 5 && (
+        <Button
+          variant="outlined"
+          onClick={() =>
+            append({
+              text: "",
+              image: undefined,
+              point: 0,
+            })
+          }
+        >
+          <AddCircleIcon />
+        </Button>
+      )}
+    </Box>
+  );
+});
+export default AnswerField;

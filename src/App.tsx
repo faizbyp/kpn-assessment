@@ -19,8 +19,8 @@ import Series from "./pages/Series";
 import Criteria from "./pages/Criteria";
 import FunctionMenu from "./pages/FunctionMenu";
 import Question from "./pages/Question";
-import CreateQuestion from "./pages/CreateQuestion";
 import QuestionDetails from "./pages/QuestionDetails";
+import CreateEditQuestion from "./pages/CreateEditQuestion";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -81,7 +81,11 @@ const router = createBrowserRouter([
       },
       {
         path: "question/create",
-        element: <CreateQuestion />,
+        element: <CreateEditQuestion />,
+      },
+      {
+        path: "question/edit/:id",
+        element: <CreateEditQuestion />,
       },
     ],
   },

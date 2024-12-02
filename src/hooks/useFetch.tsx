@@ -9,7 +9,7 @@ interface FetchState<T> {
   refetch: () => void;
 }
 
-const useFetch = <T,>(url: string): FetchState<T> => {
+const useFetch = <T,>(url?: string): FetchState<T> => {
   const API = useAPI();
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
@@ -20,7 +20,7 @@ const useFetch = <T,>(url: string): FetchState<T> => {
     setError(null);
 
     try {
-      const response = await API.get(url);
+      const response = await API.get(url || "");
       setData(response.data);
     } catch (error) {
       setError(error);

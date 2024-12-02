@@ -13,25 +13,25 @@ import {
   Container,
 } from "@mui/material";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import NumericFieldCtrl from "@/components/forms/NumericField";
+import { useForm } from "react-hook-form";
 import useAPI from "@/hooks/useAPI";
 import { snack } from "@/providers/SnackbarProvider";
 import { isAxiosError } from "axios";
 import { useLoading } from "@/providers/LoadingProvider";
 import useAuthStore from "@/hooks/useAuthStore";
 import SelectCtrl from "@/components/forms/Select";
-import { useNavigate } from "react-router-dom";
-import { allowedImageFormat } from "@/utils/constant";
+import { useNavigate, useParams } from "react-router-dom";
 import DialogComp from "@/components/Dialog";
 import useDialog from "@/hooks/useDialog";
+import useFetch from "@/hooks/useFetch";
+import { useEffect } from "react";
+import AnswerField from "@/components/AnswerField";
 
-interface AnswerValues {
+export interface AnswerValues {
   text?: string;
   image?: File;
+  imageUrl?: string;
   point: number;
 }
 
@@ -44,10 +44,14 @@ interface QuestionValues {
   answer: AnswerValues[];
 }
 
-const CreateQuestion = () => {
+const CreateEditQuestion = () => {
+  const { id } = useParams();
+  const isEdit = Boolean(id);
+
   const API = useAPI();
   const { showLoading, hideLoading } = useLoading();
   const navigate = useNavigate();
+  const { data: question } = useFetch<any>(isEdit ? `/question/${id}` : undefined);
   const user_id = useAuthStore((state) => state.user_id);
   const { isOpen, open, close } = useDialog();
   const {
@@ -58,6 +62,7 @@ const CreateQuestion = () => {
     formState: { errors },
     getValues,
     trigger,
+    reset,
   } = useForm<QuestionValues>({
     defaultValues: {
       q_seq: 0,
@@ -90,51 +95,21 @@ const CreateQuestion = () => {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "answer",
-    rules: {
-      minLength: 2,
-      maxLength: 5,
-      validate: (): string | true => validateAnswers(getValues("answer"), getValues("answer_type")),
-    },
-  });
+  useEffect(() => {
+    if (id && question) {
+      const data = question.data;
+      reset({
+        q_seq: data.question.seq,
+        q_layout_type: data.question.layout_type,
+        q_input_text: data.question.input_text,
+        q_input_image: data.question.input_image,
+        answer_type: data.answer_type,
+        answer: data.answers,
+      });
+    }
+  }, [id, question]);
 
   const questionImage = watch("q_input_image");
-  const watchAnswer = useWatch({ control, name: "answer" });
-
-  const validateAnswers = (
-    answers: AnswerValues[],
-    answerType: "single" | "multiple"
-  ): string | true => {
-    const validAnswers = answers.filter((answer) => answer.point > 0);
-
-    if (answers.findIndex((answer) => !answer.text && !answer.image) !== -1) {
-      return "Each answer must have either text or an image.";
-    }
-
-    if (answerType === "single" && validAnswers.length !== 1) {
-      return "Exact one answer must have more than 0 points.";
-    }
-
-    if (answerType === "multiple" && validAnswers.length < 2) {
-      return "At least two answers must have more than 0 points.";
-    }
-
-    if (answers.findIndex((answer) => answer.image?.size && answer.image?.size > 10485760) !== -1) {
-      return "Max 10MB file allowed.";
-    }
-
-    if (
-      answers.findIndex(
-        (answer) => answer.image && !allowedImageFormat.includes(answer.image.type)
-      ) !== -1
-    ) {
-      return "File formats not allowed.";
-    }
-
-    return true;
-  };
 
   const answerType = [
     {
@@ -154,10 +129,6 @@ const CreateQuestion = () => {
   // const addAnswerImage = (index: number, image: File) => {
   //   setValue(`answer.${index}.image`, image);
   // };
-
-  const removeAnswerImage = (index: number) => {
-    setValue(`answer.${index}.image`, undefined);
-  };
 
   const onSubmit = async (values: QuestionValues) => {
     console.log(values);
@@ -215,7 +186,7 @@ const CreateQuestion = () => {
     <>
       <Container maxWidth="lg">
         <Typography variant="h2" color="primary">
-          New Question
+          {isEdit ? `Edit` : "New"} Question
         </Typography>
 
         <Box sx={{ display: "flex", gap: 2 }}>
@@ -286,75 +257,7 @@ const CreateQuestion = () => {
             </Grid>
           </CardContent>
           <CardActions>
-            <Box sx={{ display: "flex", gap: 2 }}>
-              {watchAnswer.map((item, index) => (
-                <Card
-                  variant="outlined"
-                  sx={{ bgcolor: "action.selected", display: "flex", alignItems: "end" }}
-                  key={index}
-                >
-                  <CardContent>
-                    {item.image ? (
-                      <Box sx={{ display: "flex", position: "relative", mb: 2, height: 200 }}>
-                        <img
-                          src={URL.createObjectURL(item.image)}
-                          style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                        />
-                        <IconButton
-                          sx={{ position: "absolute" }}
-                          onClick={() => removeAnswerImage(index)}
-                        >
-                          <ClearIcon />
-                        </IconButton>
-                      </Box>
-                    ) : (
-                      <FileInput
-                        control={control}
-                        name={`answer.${index}.image`}
-                        text="Add Answer Image"
-                        fullWidth
-                        icon={<InsertPhotoIcon />}
-                        // passFile={(file) => addAnswerImage(index, file)}
-                        accept="image/*"
-                      />
-                    )}
-                    <TextFieldCtrl
-                      control={control}
-                      name={`answer.${index}.text`}
-                      placeholder="Answer"
-                      textAlign="center"
-                      multiline
-                    />
-                    <NumericFieldCtrl
-                      control={control}
-                      name={`answer.${index}.point`}
-                      label="Point"
-                      allowNegative
-                      maxLength={3}
-                    />
-                    {fields.length > 2 && (
-                      <IconButton color="error" onClick={() => remove(index)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-              {fields.length !== 5 && (
-                <Button
-                  variant="outlined"
-                  onClick={() =>
-                    append({
-                      text: "",
-                      image: undefined,
-                      point: 0,
-                    })
-                  }
-                >
-                  <AddCircleIcon />
-                </Button>
-              )}
-            </Box>
+            <AnswerField control={control} setValue={setValue} getValues={getValues} />
           </CardActions>
         </Card>
         {errors.answer?.root && (
@@ -395,4 +298,4 @@ const CreateQuestion = () => {
     </>
   );
 };
-export default CreateQuestion;
+export default CreateEditQuestion;
