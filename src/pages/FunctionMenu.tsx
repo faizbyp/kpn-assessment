@@ -105,6 +105,7 @@ const FunctionMenu = () => {
       setSelected({ id: id, name: data.fm_name });
       reset(
         {
+          fm_code: data.fm_code,
           fm_name: data.fm_name,
           is_active: data.is_active,
         },
@@ -246,14 +247,12 @@ const FunctionMenu = () => {
           </>
         }
       >
-        {!isEdit && (
-          <TextFieldCtrl
-            control={control}
-            label="Code"
-            name="fm_code"
-            rules={{ required: "Field required" }}
-          />
-        )}
+        <TextFieldCtrl
+          control={control}
+          label="Code"
+          name="fm_code"
+          rules={{ required: "Field required" }}
+        />
         <TextFieldCtrl
           control={control}
           label="Name"
