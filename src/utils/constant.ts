@@ -1,4 +1,5 @@
 export const allowedImageFormat = [
+  "image/*",
   "image/jpeg",
   "image/jpg",
   "image/png",

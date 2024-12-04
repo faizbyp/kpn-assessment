@@ -9,7 +9,7 @@ interface FetchState<T> {
   refetch: () => void;
 }
 
-const useFetch = <T,>(url?: string): FetchState<T> => {
+const useFetch = <T,>(url?: string | null): FetchState<T> => {
   const API = useAPI();
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);

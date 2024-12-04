@@ -79,8 +79,8 @@ const AnswerField = memo(function AnswerField({
   };
 
   const removeAnswerImage = (index: number) => {
-    setValue(`answer.${index}.image`, undefined);
-    setValue(`answer.${index}.image_url`, undefined);
+    setValue(`answer.${index}.image`, null);
+    setValue(`answer.${index}.image_url`, null);
   };
 
   return (
@@ -98,7 +98,7 @@ const AnswerField = memo(function AnswerField({
                   src={
                     item.image_url && item.image_url.split("/")[0] === id
                       ? `${import.meta.env.VITE_API_URL}/static/question/${item.image_url}`
-                      : item.image_url
+                      : item.image_url || ""
                   }
                   style={{ width: "100%", height: "100%", objectFit: "contain" }}
                 />
@@ -145,7 +145,7 @@ const AnswerField = memo(function AnswerField({
           onClick={() =>
             append({
               text: "",
-              image: undefined,
+              image: null,
               point: 0,
             })
           }

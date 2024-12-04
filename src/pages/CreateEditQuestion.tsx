@@ -27,11 +27,12 @@ import useDialog from "@/hooks/useDialog";
 import useFetch from "@/hooks/useFetch";
 import { useEffect } from "react";
 import AnswerField from "@/components/AnswerField";
+import { AnswerProps } from "@/types/MasterData";
 
 export interface AnswerValues {
   text?: string;
-  image?: File;
-  image_url?: string;
+  image?: File | null;
+  image_url?: string | null;
   point: number;
 }
 
@@ -39,8 +40,8 @@ interface QuestionValues {
   q_seq: number;
   q_layout_type: string;
   q_input_text?: string;
-  q_input_image?: File;
-  q_input_image_url?: string;
+  q_input_image?: File | null;
+  q_input_image_url?: string | null;
   answer_type: string;
   answer: AnswerValues[];
 }
@@ -52,7 +53,7 @@ const CreateEditQuestion = () => {
   const API = useAPI();
   const { showLoading, hideLoading } = useLoading();
   const navigate = useNavigate();
-  const { data: question } = useFetch<any>(isEdit ? `/question/${id}` : undefined);
+  const { data: question } = useFetch<any>(isEdit ? `/question/${id}` : null);
   const user_id = useAuthStore((state) => state.user_id);
   const { isOpen, open, close } = useDialog();
   const {
@@ -69,27 +70,27 @@ const CreateEditQuestion = () => {
       q_seq: 0,
       q_layout_type: "",
       q_input_text: "",
-      q_input_image: undefined,
+      q_input_image: null,
       answer_type: "",
       answer: [
         {
           text: "",
-          image: undefined,
+          image: null,
           point: 0,
         },
         {
           text: "",
-          image: undefined,
+          image: null,
           point: 0,
         },
         {
           text: "",
-          image: undefined,
+          image: null,
           point: 0,
         },
         {
           text: "",
-          image: undefined,
+          image: null,
           point: 0,
         },
       ],
@@ -97,17 +98,48 @@ const CreateEditQuestion = () => {
   });
 
   useEffect(() => {
-    if (id && question) {
-      const data = question.data;
-      reset({
-        q_seq: data.question.seq,
-        q_layout_type: data.question.layout_type,
-        q_input_text: data.question.input_text,
-        q_input_image_url: data.question.input_image_url,
-        answer_type: data.answer_type,
-        answer: data.answers,
-      });
-    }
+    const fetchAndSetData = async () => {
+      if (id && question) {
+        const data = question.data;
+
+        const getImageBlob = async (url: string) => {
+          const res = await API.get(`${import.meta.env.VITE_API_URL}/static/question/${url}`, {
+            responseType: "blob",
+          });
+          const imageData = res.data;
+          const filename = url.split("/").pop() || "default_filename";
+          const metadata = { type: "image/*" };
+          return new File([imageData], filename, metadata);
+        };
+
+        const answersWithFiles = await Promise.all(
+          data.answers.map(async (answer: AnswerProps) => {
+            if (answer.image_url) {
+              const file = await getImageBlob(answer.image_url);
+              return { ...answer, image: file };
+            }
+            return answer;
+          })
+        );
+
+        let qImage = null;
+        if (data.question.input_image_url)
+          qImage = await getImageBlob(data.question.input_image_url);
+
+        reset({
+          q_seq: data.question.seq,
+          q_layout_type: data.question.layout_type,
+          q_input_text: data.question.input_text,
+          q_input_image: qImage,
+          q_input_image_url: data.question.input_image_url,
+          answer_type: data.answer_type,
+          answer: answersWithFiles,
+        });
+      }
+    };
+
+    // Call the async function
+    fetchAndSetData().catch(console.error);
   }, [id, question]);
 
   const questionImage = watch("q_input_image");
@@ -125,8 +157,8 @@ const CreateEditQuestion = () => {
   ];
 
   const removeQuestionImage = () => {
-    setValue("q_input_image", undefined);
-    setValue("q_input_image_url", undefined);
+    setValue("q_input_image", null);
+    setValue("q_input_image_url", null);
   };
 
   const onSubmit = async (values: QuestionValues) => {
@@ -151,19 +183,24 @@ const CreateEditQuestion = () => {
       if (ans.text) {
         formData.append(`answer[${index}][text]`, ans.text);
       }
-      formData.append(`answer[${index}][point]`, ans.point.toString());
       if (ans.image) {
         formData.append(`answer[${index}][image]`, ans.image);
       }
+      formData.append(`answer[${index}][point]`, ans.point.toString());
     });
-    console.log(formData);
 
     try {
-      const res = await API.post(`/question`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = isEdit
+        ? await API.patch(`/question/${id}`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+        : await API.post(`/question`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
       console.log(res);
       snack.success(`${res.data.message}`);
       navigate("/admin/question");
@@ -222,7 +259,7 @@ const CreateEditQuestion = () => {
                     src={
                       isEdit
                         ? `${import.meta.env.VITE_API_URL}/static/question/${questionImageUrl}`
-                        : questionImage && URL.createObjectURL(questionImage)
+                        : (questionImage && URL.createObjectURL(questionImage)) || ""
                     }
                     style={{ width: "100%", height: "100%", objectFit: "contain" }}
                   />
@@ -284,7 +321,7 @@ const CreateEditQuestion = () => {
       </Container>
 
       <DialogComp
-        title="Create Question"
+        title={isEdit ? `Edit Question` : "Create Question"}
         open={isOpen}
         onClose={close}
         actions={
@@ -293,12 +330,14 @@ const CreateEditQuestion = () => {
               Cancel
             </Button>
             <Button onClick={handleSubmit(onSubmit)} variant="contained" color="error">
-              Create
+              {isEdit ? `Edit` : "Create"}
             </Button>
           </>
         }
       >
-        <Typography>{`Are you sure you want to create question?`}</Typography>
+        <Typography>{`Are you sure you want to ${
+          isEdit ? "edit this" : "create"
+        } question?`}</Typography>
       </DialogComp>
     </>
   );

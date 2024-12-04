@@ -16,6 +16,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useLoading } from "@/providers/LoadingProvider";
 import useDialog from "@/hooks/useDialog";
 import DialogComp from "@/components/Dialog";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Question = () => {
   const API = useAPI();
@@ -96,19 +97,28 @@ const Question = () => {
         accessorKey: "id",
         meta: { align: "right" },
         cell: (props: any) => (
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2, justifyContent: "end" }}>
             <IconButton
-              onClick={() => handleOpen(props.row.original.id)}
+              onClick={() => navigate(`/admin/question/edit/${props.row.original.id}`)}
               aria-label="edit"
               size="small"
               edge="end"
-              color="error"
+              // color="warning"
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => handleOpen(props.row.original.id)}
+              aria-label="delete"
+              size="small"
+              edge="end"
+              // color="error"
             >
               <DeleteIcon />
             </IconButton>
             <IconButton
               onClick={() => navigate(`/admin/question/${props.row.original.id}`)}
-              aria-label="edit"
+              aria-label="detail"
               size="small"
               edge="end"
             >
