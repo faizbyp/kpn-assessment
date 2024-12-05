@@ -15,10 +15,12 @@ import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import SportsScoreIcon from "@mui/icons-material/SportsScore";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import ListIcon from "@mui/icons-material/List";
-import { useEffect, useState } from "react";
-import { AppBar, IconButton, ListSubheader, Toolbar, Typography } from "@mui/material";
+import { Fragment, useEffect, useState } from "react";
+import { AppBar, Collapse, IconButton, Toolbar, Typography } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import UserMenu from "./UserMenu";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 const drawerWidth = 240;
 
@@ -43,6 +45,7 @@ const items = [
 export default function AdminLayout() {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
+  const [collapseState, setCollapseState] = useState<any>({});
 
   // PROTECT ROUTES INSIDE ADMIN LAYOUT
   useEffect(() => {
@@ -56,28 +59,53 @@ export default function AdminLayout() {
     setOpen(!open);
   };
 
+  const toggleCollapse = (index: number) => {
+    setCollapseState((prev: any) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
   const DrawerList = (
-    <List>
+    <List dense>
       {items &&
         items.map((menuGroup, index) => (
-          <List
-            dense
-            subheader={
-              menuGroup.subheader && (
-                <ListSubheader color="primary">{menuGroup.subheader}</ListSubheader>
-              )
-            }
-            key={index}
-          >
-            {menuGroup.items.map((item) => (
-              <ListItem disablePadding key={item.name}>
-                <ListItemButton component={Link} to={item.link}>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.name} />
+          <Fragment key={index}>
+            {menuGroup.subheader ? (
+              <>
+                <ListItemButton onClick={() => toggleCollapse(index)}>
+                  <ListItemText
+                    primary={menuGroup.subheader}
+                    primaryTypographyProps={{ color: "primary" }}
+                  />
+                  {collapseState[index] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
+                <Collapse in={collapseState[index]} timeout="auto" unmountOnExit>
+                  <List component="div" dense>
+                    {menuGroup.items.map((item) => (
+                      <ListItem disablePadding key={item.name}>
+                        <ListItemButton component={Link} to={item.link} sx={{ pl: 4 }}>
+                          <ListItemIcon>{item.icon}</ListItemIcon>
+                          <ListItemText primary={item.name} />
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Collapse>
+              </>
+            ) : (
+              <List component="div" dense>
+                {menuGroup.items.map((item) => (
+                  <ListItem disablePadding key={item.name}>
+                    <ListItemButton component={Link} to={item.link}>
+                      <ListItemIcon>{item.icon}</ListItemIcon>
+                      <ListItemText primary={item.name} />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </Fragment>
         ))}
     </List>
   );
