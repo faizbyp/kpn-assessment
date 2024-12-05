@@ -28,6 +28,7 @@ import useFetch from "@/hooks/useFetch";
 import { useEffect } from "react";
 import AnswerField from "@/components/AnswerField";
 import { AnswerProps } from "@/types/MasterData";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export interface AnswerValues {
   text?: string;
@@ -221,9 +222,14 @@ const CreateEditQuestion = () => {
   return (
     <>
       <Container maxWidth="lg">
-        <Typography variant="h2" color="primary">
-          {isEdit ? `Edit` : "New"} Question
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2, gap: 1 }}>
+          <IconButton onClick={() => navigate(-1)}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h2" color="primary" mb={0}>
+            {isEdit ? `Edit` : "New"} Question
+          </Typography>
+        </Box>
 
         <Box sx={{ display: "flex", gap: 2 }}>
           <SelectCtrl
