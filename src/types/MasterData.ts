@@ -74,3 +74,9 @@ export type QuestionProps = {
   answers: Array<{ text?: string; image_url?: string; point: number }>;
   admin?: boolean;
 };
+
+export type Page = {
+  name: string;
+  path: string;
+  icon: string;
+};

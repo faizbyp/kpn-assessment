@@ -6,7 +6,6 @@ import StandardTable from "@/components/StandardTable";
 import { TableSkeleton } from "@/components/Skeleton";
 import { useMemo, useState } from "react";
 import InfoIcon from "@mui/icons-material/Info";
-import { truncateText } from "@/utils/constant";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import useAPI from "@/hooks/useAPI";
@@ -17,6 +16,7 @@ import { useLoading } from "@/providers/LoadingProvider";
 import useDialog from "@/hooks/useDialog";
 import DialogComp from "@/components/Dialog";
 import EditIcon from "@mui/icons-material/Edit";
+import { truncateText } from "@/utils/helper";
 
 const Question = () => {
   const API = useAPI();

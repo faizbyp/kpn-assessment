@@ -5,47 +5,27 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import SubjectIcon from "@mui/icons-material/Subject";
-import HomeIcon from "@mui/icons-material/Home";
-import BusinessIcon from "@mui/icons-material/Business";
-import PolicyIcon from "@mui/icons-material/Policy";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
-import SportsScoreIcon from "@mui/icons-material/SportsScore";
-import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
-import ListIcon from "@mui/icons-material/List";
 import { Fragment, useEffect, useState } from "react";
 import { AppBar, Collapse, IconButton, Toolbar, Typography } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import UserMenu from "./UserMenu";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import useFetch from "@/hooks/useFetch";
+import { Page } from "@/types/MasterData";
+import * as Icons from "@mui/icons-material";
+
+type IconName = keyof typeof Icons;
 
 const drawerWidth = 240;
-
-const items = [
-  {
-    items: [{ name: "Admin", link: "/admin", icon: <HomeIcon /> }],
-  },
-  {
-    subheader: "Master Data",
-    items: [
-      { name: "Business Unit", link: "/admin/bu", icon: <BusinessIcon /> },
-      { name: "Terms & PP", link: "/admin/terms-pp", icon: <PolicyIcon /> },
-      { name: "Short Brief", link: "/admin/short-brief", icon: <SubjectIcon /> },
-      { name: "Series", link: "/admin/series", icon: <FormatListNumberedIcon /> },
-      { name: "Criteria", link: "/admin/criteria", icon: <SportsScoreIcon /> },
-      { name: "Function Menu", link: "/admin/function-menu", icon: <ListIcon /> },
-      { name: "Question", link: "/admin/question", icon: <QuestionAnswerIcon /> },
-    ],
-  },
-];
 
 export default function AdminLayout() {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const [collapseState, setCollapseState] = useState<any>({});
+  const { data: pages } = useFetch<any>("/page");
 
   // PROTECT ROUTES INSIDE ADMIN LAYOUT
   useEffect(() => {
@@ -68,41 +48,44 @@ export default function AdminLayout() {
 
   const DrawerList = (
     <List dense>
-      {items &&
-        items.map((menuGroup, index) => (
+      {pages &&
+        pages.data.map((menuGroup: any, index: number) => (
           <Fragment key={index}>
             {menuGroup.subheader ? (
               <>
                 <ListItemButton onClick={() => toggleCollapse(index)}>
-                  <ListItemText
-                    primary={menuGroup.subheader}
-                    primaryTypographyProps={{ color: "primary" }}
-                  />
+                  <ListItemText primary={menuGroup.subheader} />
                   {collapseState[index] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 </ListItemButton>
                 <Collapse in={collapseState[index]} timeout="auto" unmountOnExit>
                   <List component="div" dense>
-                    {menuGroup.items.map((item) => (
-                      <ListItem disablePadding key={item.name}>
-                        <ListItemButton component={Link} to={item.link} sx={{ pl: 4 }}>
-                          <ListItemIcon>{item.icon}</ListItemIcon>
-                          <ListItemText primary={item.name} />
-                        </ListItemButton>
-                      </ListItem>
-                    ))}
+                    {menuGroup.items.map((item: Page) => {
+                      const IconComponent = Icons[item.icon as IconName];
+                      return (
+                        <ListItem disablePadding key={item.name}>
+                          <ListItemButton component={Link} to={item.path} sx={{ pl: 4 }}>
+                            <ListItemIcon>{item.icon && <IconComponent />}</ListItemIcon>
+                            <ListItemText primary={item.name} />
+                          </ListItemButton>
+                        </ListItem>
+                      );
+                    })}
                   </List>
                 </Collapse>
               </>
             ) : (
               <List component="div" dense>
-                {menuGroup.items.map((item) => (
-                  <ListItem disablePadding key={item.name}>
-                    <ListItemButton component={Link} to={item.link}>
-                      <ListItemIcon>{item.icon}</ListItemIcon>
-                      <ListItemText primary={item.name} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
+                {menuGroup.items.map((item: Page) => {
+                  const IconComponent = Icons[item.icon as IconName];
+                  return (
+                    <ListItem disablePadding key={item.name}>
+                      <ListItemButton component={Link} to={item.path}>
+                        <ListItemIcon>{item.icon && <IconComponent />}</ListItemIcon>
+                        <ListItemText primary={item.name} />
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                })}
               </List>
             )}
           </Fragment>
