@@ -8,7 +8,7 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { Fragment, useEffect, useState } from "react";
-import { AppBar, Collapse, IconButton, Toolbar, Typography } from "@mui/material";
+import { AppBar, CircularProgress, Collapse, IconButton, Toolbar, Typography } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import UserMenu from "./UserMenu";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -48,7 +48,7 @@ export default function AdminLayout() {
 
   const DrawerList = (
     <List dense>
-      {pages &&
+      {pages ? (
         pages.data.map((menuGroup: any, index: number) => (
           <Fragment key={index}>
             {menuGroup.subheader ? (
@@ -89,7 +89,12 @@ export default function AdminLayout() {
               </List>
             )}
           </Fragment>
-        ))}
+        ))
+      ) : (
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+          <CircularProgress />
+        </Box>
+      )}
     </List>
   );
 
