@@ -9,7 +9,7 @@ import { useFieldArray, useWatch } from "react-hook-form";
 import NumericFieldCtrl from "@/components/forms/NumericField";
 import { allowedImageFormat } from "@/utils/constant";
 import { memo } from "react";
-import { AnswerValues } from "@/pages/CreateEditQuestion";
+import { AnswerValues } from "@/pages/master-data/question/CreateEditQuestion";
 
 interface AnswerFieldProps {
   control: any;
