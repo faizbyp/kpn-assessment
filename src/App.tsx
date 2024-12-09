@@ -21,6 +21,7 @@ import FunctionMenu from "./pages/master-data/FunctionMenu";
 import Question from "./pages/master-data/question/Question";
 import QuestionDetails from "./pages/master-data/question/QuestionDetails";
 import CreateEditQuestion from "./pages/master-data/question/CreateEditQuestion";
+import AdminAccounts from "./pages/AdminAccounts";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
       {
         path: "question/edit/:id",
         element: <CreateEditQuestion />,
+      },
+      {
+        path: "accounts",
+        element: <AdminAccounts />,
       },
     ],
   },
