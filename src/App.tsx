@@ -23,6 +23,8 @@ import QuestionDetails from "./pages/master-data/question/QuestionDetails";
 import CreateEditQuestion from "./pages/master-data/question/CreateEditQuestion";
 import AdminAccounts from "./pages/AdminAccounts";
 import CreateAdmin from "./pages/CreateAdmin";
+import ReqResetPass from "./pages/ReqResetPass";
+import ResetPass from "./pages/ResetPass";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -40,6 +42,14 @@ const router = createBrowserRouter([
   {
     path: "/admin-login",
     element: <AdminLogin />,
+  },
+  {
+    path: "/reset-pass",
+    element: <ReqResetPass />,
+  },
+  {
+    path: "/reset-pass/:email",
+    element: <ResetPass />,
   },
   {
     path: "admin",
