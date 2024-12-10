@@ -44,11 +44,11 @@ const AdminAccounts = () => {
         meta: { align: "right" },
         cell: (props: any) => {
           const id = props.getValue();
-          const bu_name = props.row.original.bu_name;
+          // const email = encodeURIComponent(props.row.original.email);
 
           return (
             <>
-              <IconButton onClick={() => alert(id)} size="small" edge="end">
+              <IconButton onClick={() => navigate(`/admin/accounts/${id}`)} size="small" edge="end">
                 <InfoIcon />
               </IconButton>
             </>

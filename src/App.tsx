@@ -25,6 +25,7 @@ import AdminAccounts from "./pages/AdminAccounts";
 import CreateAdmin from "./pages/CreateAdmin";
 import ReqResetPass from "./pages/ReqResetPass";
 import ResetPass from "./pages/ResetPass";
+import AdminDetails from "./pages/AdminDetails";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -102,6 +103,10 @@ const router = createBrowserRouter([
       {
         path: "accounts",
         element: <AdminAccounts />,
+      },
+      {
+        path: "accounts/:id",
+        element: <AdminDetails />,
       },
       {
         path: "accounts/create",
