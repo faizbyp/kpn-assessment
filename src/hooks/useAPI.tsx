@@ -7,6 +7,7 @@ const useAPI = () => {
   const username = useAuthStore((state) => state.username);
   const fullname = useAuthStore((state) => state.fullname);
   const email = useAuthStore((state) => state.email);
+  const role_id = useAuthStore((state) => state.role_id);
 
   const accessToken = useAuthStore((state) => state.access_token);
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
@@ -38,6 +39,7 @@ const useAPI = () => {
             username,
             fullname,
             email,
+            role_id,
           });
           const newAccessToken = resAccessToken.data.access_token;
 

@@ -9,6 +9,7 @@ const useAuthStore = create<Auth>()(
       fullname: "",
       email: "",
       user_id: "",
+      role_id: "",
       access_token: "",
 
       setAuth: (loginRes: LoginRes) => {
@@ -17,6 +18,7 @@ const useAuthStore = create<Auth>()(
           fullname: loginRes.fullname,
           email: loginRes.email,
           user_id: loginRes.user_id,
+          role_id: loginRes.role_id,
           access_token: loginRes.access_token,
         });
       },
@@ -42,6 +44,7 @@ const useAuthStore = create<Auth>()(
           fullname: "",
           email: "",
           user_id: "",
+          role_id: "",
           access_token: "",
         });
         localStorage.removeItem("auth-storage");

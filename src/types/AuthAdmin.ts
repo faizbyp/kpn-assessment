@@ -3,6 +3,7 @@ export type LoginRes = {
   fullname: string;
   email: string;
   user_id: string;
+  role_id: string;
   access_token: string;
 };
 
