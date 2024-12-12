@@ -14,7 +14,7 @@ import UserMenu from "./UserMenu";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import useFetch from "@/hooks/useFetch";
-import { Page } from "@/types/MasterData";
+import { Menu } from "@/types/MasterData";
 import * as Icons from "@mui/icons-material";
 
 type IconName = keyof typeof Icons;
@@ -25,7 +25,7 @@ export default function AdminLayout() {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const [collapseState, setCollapseState] = useState<any>({});
-  const { data: pages } = useFetch<any>("/page");
+  const { data: menu } = useFetch<any>("/menu");
 
   // PROTECT ROUTES INSIDE ADMIN LAYOUT
   useEffect(() => {
@@ -48,8 +48,8 @@ export default function AdminLayout() {
 
   const DrawerList = (
     <List dense>
-      {pages ? (
-        pages.data.map((menuGroup: any, index: number) => (
+      {menu ? (
+        menu.data.map((menuGroup: any, index: number) => (
           <Fragment key={index}>
             {menuGroup.subheader ? (
               <>
@@ -59,7 +59,7 @@ export default function AdminLayout() {
                 </ListItemButton>
                 <Collapse in={collapseState[index]} timeout="auto" unmountOnExit>
                   <List component="div" dense>
-                    {menuGroup.items.map((item: Page) => {
+                    {menuGroup.items.map((item: Menu) => {
                       const IconComponent = Icons[item.icon as IconName];
                       return (
                         <ListItem disablePadding key={item.name}>
@@ -75,7 +75,7 @@ export default function AdminLayout() {
               </>
             ) : (
               <List component="div" dense>
-                {menuGroup.items.map((item: Page) => {
+                {menuGroup.items.map((item: Menu) => {
                   const IconComponent = Icons[item.icon as IconName];
                   return (
                     <ListItem disablePadding key={item.name}>

@@ -26,6 +26,7 @@ import CreateAdmin from "./pages/CreateAdmin";
 import ReqResetPass from "./pages/ReqResetPass";
 import ResetPass from "./pages/ResetPass";
 import AdminDetails from "./pages/AdminDetails";
+import RoleManager from "./pages/RoleManager";
 
 const WelcomeClient = lazy(() => import("@/pages/WelcomeClient"));
 const RouteProtector = lazy(() => import("@/protector/RouteProtector"));
@@ -111,6 +112,10 @@ const router = createBrowserRouter([
       {
         path: "accounts/create",
         element: <CreateAdmin />,
+      },
+      {
+        path: "role",
+        element: <RoleManager />,
       },
     ],
   },

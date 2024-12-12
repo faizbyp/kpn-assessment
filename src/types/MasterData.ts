@@ -75,7 +75,7 @@ export type QuestionProps = {
   admin?: boolean;
 };
 
-export type Page = {
+export type Menu = {
   name: string;
   path: string;
   icon: string;

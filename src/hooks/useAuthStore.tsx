@@ -40,11 +40,11 @@ const useAuthStore = create<Auth>()(
         set({ access_token: newToken });
       },
 
-      getPermission: (action: "fcreate" | "fread" | "fupdate" | "fdelete", pageId: number) => {
+      getPermission: (action: "fcreate" | "fread" | "fupdate" | "fdelete", menuId: number) => {
         const permission = get().permission;
-        const pagePermission = permission.find((perm: any) => Number(perm.page_id) === pageId);
+        const menuPermission = permission.find((perm: any) => Number(perm.menu_id) === menuId);
 
-        if (pagePermission && pagePermission[action]) return true;
+        if (menuPermission && menuPermission[action]) return true;
 
         return false;
       },

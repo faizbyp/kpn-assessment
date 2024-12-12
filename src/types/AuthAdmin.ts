@@ -5,7 +5,7 @@ export type LoginRes = {
   user_id: string;
   role_id: string;
   permission: Array<{
-    page_id: number;
+    menu_id: number;
     fcreate: boolean;
     fread: boolean;
     fupdate: boolean;
@@ -19,7 +19,7 @@ type AuthAction = {
   checkAuth: () => void;
   setAccessToken: (newToken: string) => void;
   signOut: () => void;
-  getPermission: (action: "fcreate" | "fread" | "fupdate" | "fdelete", pageId: number) => boolean;
+  getPermission: (action: "fcreate" | "fread" | "fupdate" | "fdelete", menuId: number) => boolean;
 };
 
 export type Auth = LoginRes & AuthAction;
