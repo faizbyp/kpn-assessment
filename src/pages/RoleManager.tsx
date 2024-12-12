@@ -105,7 +105,7 @@ const RoleManager = () => {
   const menuTable = ({ row }: { row: any }) => {
     return (
       <>
-        <StandardTable columns={menuColumns} data={row.original.permission} />
+        <StandardTable columns={menuColumns} data={row.original.permission} maxHeight={200} />
       </>
     );
   };
