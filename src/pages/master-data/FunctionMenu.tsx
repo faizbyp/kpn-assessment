@@ -21,6 +21,7 @@ import useAPI from "@/hooks/useAPI";
 const FunctionMenu = () => {
   const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
+  const getPermission = useAuthStore((state) => state.getPermission);
   const { showLoading, hideLoading } = useLoading();
   const { data: fm, refetch } = useFetch<any>("/function-menu");
   const [selected, setSelected] = useState({ id: "", name: "" });
@@ -68,24 +69,28 @@ const FunctionMenu = () => {
 
           return (
             <>
-              <IconButton
-                onClick={() => handleOpenForm(props.row.original, id)}
-                aria-label="edit"
-                size="small"
-                edge="end"
-                sx={{ mr: 1 }}
-              >
-                <EditIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => handleOpenDelete(id, name)}
-                aria-label="delete"
-                color="error"
-                size="small"
-                edge="end"
-              >
-                <DeleteIcon />
-              </IconButton>
+              {getPermission("fupdate", 6) && (
+                <IconButton
+                  onClick={() => handleOpenForm(props.row.original, id)}
+                  aria-label="edit"
+                  size="small"
+                  edge="end"
+                  sx={{ mr: 1 }}
+                >
+                  <EditIcon />
+                </IconButton>
+              )}
+              {getPermission("fdelete", 6) && (
+                <IconButton
+                  onClick={() => handleOpenDelete(id, name)}
+                  aria-label="delete"
+                  color="error"
+                  size="small"
+                  edge="end"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              )}
             </>
           );
         },
@@ -194,18 +199,20 @@ const FunctionMenu = () => {
     <>
       <Typography variant="h1" color="primary">
         Function Menu
-        <Button
-          startIcon={<AddIcon />}
-          variant="outlined"
-          sx={{ ml: 2 }}
-          onClick={() => handleOpenForm()}
-        >
-          Create Function
-        </Button>
+        {getPermission("fcreate", 6) && (
+          <Button
+            startIcon={<AddIcon />}
+            variant="outlined"
+            sx={{ ml: 2 }}
+            onClick={() => handleOpenForm()}
+          >
+            Create Function
+          </Button>
+        )}
       </Typography>
 
       {fm ? (
-        <StandardTable columns={columns} data={fm?.data} />
+        getPermission("fread", 6) && <StandardTable columns={columns} data={fm?.data} />
       ) : (
         <TableSkeleton column={4} row={2} small />
       )}

@@ -2,6 +2,7 @@ import DialogComp from "@/components/Dialog";
 import QuestionAnswer from "@/components/QuestionAnswer";
 import { QuestionSkeleton } from "@/components/Skeleton";
 import useAPI from "@/hooks/useAPI";
+import useAuthStore from "@/hooks/useAuthStore";
 import useDialog from "@/hooks/useDialog";
 import useFetch from "@/hooks/useFetch";
 import { useLoading } from "@/providers/LoadingProvider";
@@ -13,6 +14,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const QuestionDetails = () => {
   const { id } = useParams();
   const { data } = useFetch<any>(`/question/${id}`);
+  const getPermission = useAuthStore((state) => state.getPermission);
   const navigate = useNavigate();
   const API = useAPI();
   const { showLoading, hideLoading } = useLoading();
@@ -56,11 +58,13 @@ const QuestionDetails = () => {
           <QuestionSkeleton />
         )}
 
-        <Box sx={{ my: 2 }}>
-          <Button variant="contained" color="error" sx={{ mt: 1 }} onClick={openDelete}>
-            Delete Question
-          </Button>
-        </Box>
+        {getPermission("fdelete", 7) && (
+          <Box sx={{ my: 2 }}>
+            <Button variant="contained" color="error" sx={{ mt: 1 }} onClick={openDelete}>
+              Delete Question
+            </Button>
+          </Box>
+        )}
       </Container>
 
       <DialogComp

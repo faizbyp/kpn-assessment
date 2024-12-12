@@ -17,10 +17,12 @@ import useDialog from "@/hooks/useDialog";
 import DialogComp from "@/components/Dialog";
 import EditIcon from "@mui/icons-material/Edit";
 import { truncateText } from "@/utils/helper";
+import useAuthStore from "@/hooks/useAuthStore";
 
 const Question = () => {
   const API = useAPI();
   const navigate = useNavigate();
+  const getPermission = useAuthStore((state) => state.getPermission);
   const { data: question, refetch } = useFetch<any>("/question");
   const [selected, setSelected] = useState("");
   const { showLoading, hideLoading } = useLoading();
@@ -98,24 +100,28 @@ const Question = () => {
         meta: { align: "right" },
         cell: (props: any) => (
           <Box sx={{ display: "flex", gap: 2, justifyContent: "end" }}>
-            <IconButton
-              onClick={() => navigate(`/admin/question/edit/${props.row.original.id}`)}
-              aria-label="edit"
-              size="small"
-              edge="end"
-              // color="warning"
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              onClick={() => handleOpen(props.row.original.id)}
-              aria-label="delete"
-              size="small"
-              edge="end"
-              // color="error"
-            >
-              <DeleteIcon />
-            </IconButton>
+            {getPermission("fupdate", 7) && (
+              <IconButton
+                onClick={() => navigate(`/admin/question/edit/${props.row.original.id}`)}
+                aria-label="edit"
+                size="small"
+                edge="end"
+                // color="warning"
+              >
+                <EditIcon />
+              </IconButton>
+            )}
+            {getPermission("fdelete", 7) && (
+              <IconButton
+                onClick={() => handleOpen(props.row.original.id)}
+                aria-label="delete"
+                size="small"
+                edge="end"
+                // color="error"
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
             <IconButton
               onClick={() => navigate(`/admin/question/${props.row.original.id}`)}
               aria-label="detail"
@@ -215,18 +221,22 @@ const Question = () => {
     <>
       <Typography variant="h1" color="primary">
         Question
-        <Button
-          variant="outlined"
-          startIcon={<AddIcon />}
-          sx={{ ml: 2 }}
-          onClick={() => navigate("/admin/question/create")}
-        >
-          Create Question
-        </Button>
+        {getPermission("fcreate", 7) && (
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon />}
+            sx={{ ml: 2 }}
+            onClick={() => navigate("/admin/question/create")}
+          >
+            Create Question
+          </Button>
+        )}
       </Typography>
 
       {question ? (
-        <StandardTable columns={columns} data={question?.data} renderSubComponent={answerTable} />
+        getPermission("fread", 7) && (
+          <StandardTable columns={columns} data={question?.data} renderSubComponent={answerTable} />
+        )
       ) : (
         <TableSkeleton column={4} row={2} small />
       )}

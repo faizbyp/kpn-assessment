@@ -29,6 +29,7 @@ import useAPI from "@/hooks/useAPI";
 const Criteria = () => {
   const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
+  const getPermission = useAuthStore((state) => state.getPermission);
   const { showLoading, hideLoading } = useLoading();
   const { data: criteria, refetch } = useFetch<any>("/criteria");
   const [isEdit, setIsEdit] = useState(false);
@@ -166,16 +167,18 @@ const Criteria = () => {
     <>
       <Typography variant="h1" color="primary">
         Criteria
-        <Button
-          startIcon={<AddIcon />}
-          variant="outlined"
-          onClick={() => handleOpenForm()}
-          sx={{ ml: 2 }}
-        >
-          Create Criteria
-        </Button>
+        {getPermission("fcreate", 5) && (
+          <Button
+            startIcon={<AddIcon />}
+            variant="outlined"
+            onClick={() => handleOpenForm()}
+            sx={{ ml: 2 }}
+          >
+            Create Criteria
+          </Button>
+        )}
       </Typography>
-      {criteria ? (
+      {getPermission("fread", 5) && criteria ? (
         <>
           <Grid container spacing={2}>
             {criteria.data.map((category: any, index: number) => (
@@ -219,19 +222,23 @@ const Criteria = () => {
                   </CardContent>
                   <CardActions>
                     <Box sx={{ display: "flex", gap: 2, justifyContent: "end", width: "100%" }}>
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleOpenForm(category, category.value_id)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleOpenDelete(category.value_id, category.value_name)}
-                      >
-                        Delete
-                      </Button>
+                      {getPermission("fupdate", 5) && (
+                        <Button
+                          variant="outlined"
+                          onClick={() => handleOpenForm(category, category.value_id)}
+                        >
+                          Edit
+                        </Button>
+                      )}
+                      {getPermission("fdelete", 5) && (
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => handleOpenDelete(category.value_id, category.value_name)}
+                        >
+                          Delete
+                        </Button>
+                      )}
                     </Box>
                   </CardActions>
                 </Card>

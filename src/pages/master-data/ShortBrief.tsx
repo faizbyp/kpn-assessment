@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 const ShortBrief = () => {
   const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
+  const getPermission = useAuthStore((state) => state.getPermission);
   const { data: brief, refetch } = useFetch<any>("/short-brief");
   const { showLoading, hideLoading } = useLoading();
   const {
@@ -66,7 +67,7 @@ const ShortBrief = () => {
       </Typography>
       <Grid container spacing={4}>
         <Grid size={{ xs: 12, md: 6 }}>
-          {brief ? (
+          {getPermission("fread", 3) && brief ? (
             <>
               <TextFieldCtrl
                 name="short_brief_name"
@@ -74,18 +75,21 @@ const ShortBrief = () => {
                 control={control}
                 multiline
                 minRows={6}
+                readOnly={!getPermission("fupdate", 3)}
               />
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Typography color="text.secondary">
                   Last update: {brief && brief.data.updated_date}
                 </Typography>
-                <Button
-                  variant="contained"
-                  disabled={!dirtyFields.short_brief_name}
-                  onClick={handleSubmit(onUpdate)}
-                >
-                  Update
-                </Button>
+                {getPermission("fupdate", 3) && (
+                  <Button
+                    variant="contained"
+                    disabled={!dirtyFields.short_brief_name}
+                    onClick={handleSubmit(onUpdate)}
+                  >
+                    Update
+                  </Button>
+                )}
               </Box>
             </>
           ) : (

@@ -6,9 +6,11 @@ import AddIcon from "@mui/icons-material/Add";
 import StandardTable from "@/components/StandardTable";
 import { TableSkeleton } from "@/components/Skeleton";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "@/hooks/useAuthStore";
 
 const AdminAccounts = () => {
   const navigate = useNavigate();
+  const getPermission = useAuthStore((state) => state.getPermission);
   const { data: admin } = useFetch<any>("/admin");
 
   const columns: any = useMemo(
@@ -63,18 +65,20 @@ const AdminAccounts = () => {
     <>
       <Typography variant="h1" color="primary">
         Admin Accounts
-        <Button
-          startIcon={<AddIcon />}
-          variant="outlined"
-          onClick={() => navigate("/admin/accounts/create")}
-          sx={{ ml: 2 }}
-        >
-          Add Admin
-        </Button>
+        {getPermission("fcreate", 8) && (
+          <Button
+            startIcon={<AddIcon />}
+            variant="outlined"
+            onClick={() => navigate("/admin/accounts/create")}
+            sx={{ ml: 2 }}
+          >
+            Add Admin
+          </Button>
+        )}
       </Typography>
 
       {admin ? (
-        <StandardTable data={admin.data} columns={columns} />
+        getPermission("fread", 8) && <StandardTable data={admin.data} columns={columns} />
       ) : (
         <TableSkeleton column={4} row={2} small />
       )}

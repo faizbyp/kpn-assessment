@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 const TermsPP = () => {
   const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
+  const getPermission = useAuthStore((state) => state.getPermission);
   const { data: termsPP, refetch } = useFetch<any>("/terms-pp");
   const { showLoading, hideLoading } = useLoading();
   const {
@@ -96,54 +97,74 @@ const TermsPP = () => {
         Terms & Privacy Policy
       </Typography>
       <Grid container spacing={4}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          {termsPP ? (
-            <>
-              <TextFieldCtrl name="terms" label="Terms" control={control} multiline minRows={6} />
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Typography color="text.secondary">
-                  Last update: {termsPP && termsPP.data.terms.updated_date}
-                </Typography>
-                <Button
-                  variant="contained"
-                  disabled={!dirtyFields.terms}
-                  onClick={handleSubmit(onUpdateTerms)}
-                >
-                  Update
-                </Button>
-              </Box>
-            </>
-          ) : (
-            <BoxSkeleton />
-          )}
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          {termsPP ? (
-            <>
-              <TextFieldCtrl
-                name="pp"
-                label="Privacy Policy"
-                control={control}
-                multiline
-                minRows={6}
-              />
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Typography color="text.secondary">
-                  Last update: {termsPP && termsPP.data.pp.updated_date}
-                </Typography>
-                <Button
-                  variant="contained"
-                  disabled={!dirtyFields.pp}
-                  onClick={handleSubmit(onUpdatePP)}
-                >
-                  Update
-                </Button>
-              </Box>
-            </>
-          ) : (
-            <BoxSkeleton />
-          )}
-        </Grid>
+        {getPermission("fread", 2) && (
+          <>
+            <Grid size={{ xs: 12, md: 6 }}>
+              {termsPP ? (
+                <>
+                  <TextFieldCtrl
+                    name="terms"
+                    label="Terms"
+                    control={control}
+                    multiline
+                    minRows={6}
+                    readOnly={!getPermission("fupdate", 2)}
+                  />
+                  <Box
+                    sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                  >
+                    <Typography color="text.secondary">
+                      Last update: {termsPP && termsPP.data.terms.updated_date}
+                    </Typography>
+                    {getPermission("fupdate", 2) && (
+                      <Button
+                        variant="contained"
+                        disabled={!dirtyFields.terms}
+                        onClick={handleSubmit(onUpdateTerms)}
+                      >
+                        Update
+                      </Button>
+                    )}
+                  </Box>
+                </>
+              ) : (
+                <BoxSkeleton />
+              )}
+            </Grid>
+            <Grid size={{ xs: 12, md: 6 }}>
+              {termsPP ? (
+                <>
+                  <TextFieldCtrl
+                    name="pp"
+                    label="Privacy Policy"
+                    control={control}
+                    multiline
+                    minRows={6}
+                    readOnly={!getPermission("fupdate", 2)}
+                  />
+                  <Box
+                    sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                  >
+                    <Typography color="text.secondary">
+                      Last update: {termsPP && termsPP.data.pp.updated_date}
+                    </Typography>
+                    {getPermission("fupdate", 2) && (
+                      <Button
+                        variant="contained"
+                        disabled={!dirtyFields.pp}
+                        onClick={handleSubmit(onUpdatePP)}
+                      >
+                        Update
+                      </Button>
+                    )}
+                  </Box>
+                </>
+              ) : (
+                <BoxSkeleton />
+              )}
+            </Grid>
+          </>
+        )}
       </Grid>
     </>
   );

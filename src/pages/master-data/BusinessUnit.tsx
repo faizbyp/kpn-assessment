@@ -21,6 +21,7 @@ import useAPI from "@/hooks/useAPI";
 const BusinessUnit = () => {
   const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
+  const getPermission = useAuthStore((state) => state.getPermission);
   const { showLoading, hideLoading } = useLoading();
   const { data: bu, refetch } = useFetch<any>("/bu");
   const [selectedBU, setSelectedBU] = useState({ id: "", bu_name: "" });
@@ -68,24 +69,28 @@ const BusinessUnit = () => {
 
           return (
             <>
-              <IconButton
-                onClick={() => handleOpenForm(props.row.original, id)}
-                aria-label="edit"
-                size="small"
-                edge="end"
-                sx={{ mr: 1 }}
-              >
-                <EditIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => handleOpenDelete(id, bu_name)}
-                aria-label="delete"
-                color="error"
-                size="small"
-                edge="end"
-              >
-                <DeleteIcon />
-              </IconButton>
+              {getPermission("fupdate", 1) && (
+                <IconButton
+                  onClick={() => handleOpenForm(props.row.original, id)}
+                  aria-label="edit"
+                  size="small"
+                  edge="end"
+                  sx={{ mr: 1 }}
+                >
+                  <EditIcon />
+                </IconButton>
+              )}
+              {getPermission("fdelete", 1) && (
+                <IconButton
+                  onClick={() => handleOpenDelete(id, bu_name)}
+                  aria-label="delete"
+                  color="error"
+                  size="small"
+                  edge="end"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              )}
             </>
           );
         },
@@ -194,17 +199,19 @@ const BusinessUnit = () => {
     <>
       <Typography variant="h1" color="primary">
         Business Unit
-        <Button
-          startIcon={<AddIcon />}
-          variant="outlined"
-          onClick={() => handleOpenForm()}
-          sx={{ ml: 2 }}
-        >
-          Create BU
-        </Button>
+        {getPermission("fcreate", 1) && (
+          <Button
+            startIcon={<AddIcon />}
+            variant="outlined"
+            onClick={() => handleOpenForm()}
+            sx={{ ml: 2 }}
+          >
+            Create BU
+          </Button>
+        )}
       </Typography>
       {bu ? (
-        <StandardTable columns={columns} data={bu?.data} />
+        getPermission("fread", 1) && <StandardTable columns={columns} data={bu?.data} />
       ) : (
         <TableSkeleton column={4} row={2} small />
       )}

@@ -10,6 +10,7 @@ const useAuthStore = create<Auth>()(
       email: "",
       user_id: "",
       role_id: "",
+      permission: [],
       access_token: "",
 
       setAuth: (loginRes: LoginRes) => {
@@ -19,6 +20,7 @@ const useAuthStore = create<Auth>()(
           email: loginRes.email,
           user_id: loginRes.user_id,
           role_id: loginRes.role_id,
+          permission: loginRes.permission,
           access_token: loginRes.access_token,
         });
       },
@@ -38,6 +40,15 @@ const useAuthStore = create<Auth>()(
         set({ access_token: newToken });
       },
 
+      getPermission: (action: "fcreate" | "fread" | "fupdate" | "fdelete", pageId: number) => {
+        const permission = get().permission;
+        const pagePermission = permission.find((perm: any) => Number(perm.page_id) === pageId);
+
+        if (pagePermission && pagePermission[action]) return true;
+
+        return false;
+      },
+
       signOut: () => {
         set({
           username: "",
@@ -45,6 +56,7 @@ const useAuthStore = create<Auth>()(
           email: "",
           user_id: "",
           role_id: "",
+          permission: [],
           access_token: "",
         });
         localStorage.removeItem("auth-storage");

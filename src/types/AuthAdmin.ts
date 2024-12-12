@@ -4,6 +4,13 @@ export type LoginRes = {
   email: string;
   user_id: string;
   role_id: string;
+  permission: Array<{
+    page_id: number;
+    fcreate: boolean;
+    fread: boolean;
+    fupdate: boolean;
+    fdelete: boolean;
+  }>;
   access_token: string;
 };
 
@@ -12,6 +19,7 @@ type AuthAction = {
   checkAuth: () => void;
   setAccessToken: (newToken: string) => void;
   signOut: () => void;
+  getPermission: (action: "fcreate" | "fread" | "fupdate" | "fdelete", pageId: number) => boolean;
 };
 
 export type Auth = LoginRes & AuthAction;

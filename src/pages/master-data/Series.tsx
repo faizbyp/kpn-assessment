@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 const Series = () => {
   const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
+  const getPermission = useAuthStore((state) => state.getPermission);
   const { showLoading, hideLoading } = useLoading();
   const { data: series, refetch } = useFetch<any>("/series");
   const [curSeries, setCurSeries] = useState({ id: "", series_name: "" });
@@ -131,22 +132,24 @@ const Series = () => {
         Series
       </Typography>
       <Grid container spacing={4}>
+        {getPermission("fcreate", 4) && (
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextFieldCtrl
+              control={control}
+              name="series_name"
+              label="Series Name"
+              rules={{ required: "Field required" }}
+            />
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <CheckboxCtrl control={control} name="is_active" label="Active" noMargin />
+              <Button variant="contained" onClick={handleSubmit(onSubmit)} disabled={!isDirty}>
+                Create
+              </Button>
+            </Box>
+          </Grid>
+        )}
         <Grid size={{ xs: 12, md: 6 }}>
-          <TextFieldCtrl
-            control={control}
-            name="series_name"
-            label="Series Name"
-            rules={{ required: "Field required" }}
-          />
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <CheckboxCtrl control={control} name="is_active" label="Active" noMargin />
-            <Button variant="contained" onClick={handleSubmit(onSubmit)} disabled={!isDirty}>
-              Create
-            </Button>
-          </Box>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          {series ? (
+          {getPermission("fread", 4) && series ? (
             <List>
               {series.data.map((seri: SeriesType) => (
                 <ListItem key={seri.id} sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -154,21 +157,25 @@ const Series = () => {
                     {seri.series_name}
                   </Typography>
                   <Box>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      sx={{ mr: 2 }}
-                      onClick={() => handleOpenEdit(seri, seri.id)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => handleOpenDelete(seri.id, seri.series_name)}
-                    >
-                      Remove
-                    </Button>
+                    {getPermission("fupdate", 4) && (
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        sx={{ mr: 2 }}
+                        onClick={() => handleOpenEdit(seri, seri.id)}
+                      >
+                        Edit
+                      </Button>
+                    )}
+                    {getPermission("fdelete", 4) && (
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleOpenDelete(seri.id, seri.series_name)}
+                      >
+                        Remove
+                      </Button>
+                    )}
                   </Box>
                 </ListItem>
               ))}
