@@ -1,5 +1,5 @@
 import useFetch from "@/hooks/useFetch";
-import { Box, Checkbox, IconButton, Typography } from "@mui/material";
+import { Box, Button, Checkbox, IconButton, Typography } from "@mui/material";
 import { useMemo } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import useAuthStore from "@/hooks/useAuthStore";
 import StandardTable from "@/components/StandardTable";
 import { TableSkeleton } from "@/components/Skeleton";
+import AddIcon from "@mui/icons-material/Add";
 
 const RoleManager = () => {
   const { data: role } = useFetch<any>("/admin/permission");
@@ -113,6 +114,16 @@ const RoleManager = () => {
     <>
       <Typography variant="h1" color="primary">
         Role Manager
+        {getPermission("fcreate", 10) && (
+          <Button
+            startIcon={<AddIcon />}
+            variant="outlined"
+            onClick={() => navigate("/admin/role/create")}
+            sx={{ ml: 2 }}
+          >
+            Add Role
+          </Button>
+        )}
       </Typography>
 
       {role ? (

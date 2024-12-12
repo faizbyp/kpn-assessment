@@ -25,7 +25,7 @@ export default function AdminLayout() {
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const [collapseState, setCollapseState] = useState<any>({});
-  const { data: menu } = useFetch<any>("/menu");
+  const { data: menu } = useFetch<any>("/menu/admin");
 
   // PROTECT ROUTES INSIDE ADMIN LAYOUT
   useEffect(() => {
