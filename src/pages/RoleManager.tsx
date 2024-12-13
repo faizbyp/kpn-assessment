@@ -55,7 +55,7 @@ const RoleManager = () => {
           <Box sx={{ display: "flex", gap: 2, justifyContent: "end" }}>
             {getPermission("fupdate", 10) && (
               <IconButton
-                onClick={() => navigate(`/admin/role/${props.getValue()}`)}
+                onClick={() => navigate(`/admin/role/edit/${props.getValue()}`)}
                 aria-label="edit"
                 size="small"
                 edge="end"
