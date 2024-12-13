@@ -10,7 +10,7 @@ import { snack } from "@/providers/SnackbarProvider";
 import { Box, Button, Typography } from "@mui/material";
 import { isAxiosError } from "axios";
 import { useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 const CreateRole = () => {
@@ -19,7 +19,7 @@ const CreateRole = () => {
   const navigate = useNavigate();
   const API = useAPI();
   const user_id = useAuthStore((state) => state.user_id);
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, setValue } = useForm({
     defaultValues: {
       role_name: "",
       is_active: true,
@@ -53,13 +53,27 @@ const CreateRole = () => {
       },
       {
         header: "Create",
-        cell: (props: any) => (
-          <CheckboxCtrl
-            name={`permission.${props.row.index}.fcreate`}
-            control={control}
-            color="success"
-          />
-        ),
+        cell: (props: any) => {
+          const fread = useWatch({
+            control,
+            name: `permission.${props.row.index}.fread`,
+          });
+          useEffect(() => {
+            if (!fread) {
+              setValue(`permission.${props.row.index}.fcreate`, false);
+              setValue(`permission.${props.row.index}.fupdate`, false);
+              setValue(`permission.${props.row.index}.fdelete`, false);
+            }
+          }, [fread, props.row.index, setValue]);
+          return (
+            <CheckboxCtrl
+              name={`permission.${props.row.index}.fcreate`}
+              control={control}
+              color="success"
+              disabled={!fread}
+            />
+          );
+        },
       },
       {
         header: "Read",
@@ -73,23 +87,37 @@ const CreateRole = () => {
       },
       {
         header: "Update",
-        cell: (props: any) => (
-          <CheckboxCtrl
-            name={`permission.${props.row.index}.fupdate`}
-            control={control}
-            color="success"
-          />
-        ),
+        cell: (props: any) => {
+          const fread = useWatch({
+            control,
+            name: `permission.${props.row.index}.fread`,
+          });
+          return (
+            <CheckboxCtrl
+              name={`permission.${props.row.index}.fupdate`}
+              control={control}
+              color="success"
+              disabled={!fread}
+            />
+          );
+        },
       },
       {
         header: "Delete",
-        cell: (props: any) => (
-          <CheckboxCtrl
-            name={`permission.${props.row.index}.fdelete`}
-            control={control}
-            color="success"
-          />
-        ),
+        cell: (props: any) => {
+          const fread = useWatch({
+            control,
+            name: `permission.${props.row.index}.fread`,
+          });
+          return (
+            <CheckboxCtrl
+              name={`permission.${props.row.index}.fdelete`}
+              control={control}
+              color="success"
+              disabled={!fread}
+            />
+          );
+        },
       },
     ],
     []

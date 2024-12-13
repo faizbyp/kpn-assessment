@@ -9,6 +9,7 @@ interface CheckboxProps {
   defaultValue?: string;
   noMargin?: boolean;
   color?: "error" | "primary" | "secondary" | "info" | "success" | "warning" | "default";
+  disabled?: boolean;
 }
 
 const CheckboxCtrl = ({
@@ -19,6 +20,7 @@ const CheckboxCtrl = ({
   defaultValue,
   noMargin,
   color,
+  disabled,
 }: CheckboxProps) => {
   return (
     <Controller
@@ -37,6 +39,7 @@ const CheckboxCtrl = ({
                 onChange={(e) => field.onChange(e.target.checked)}
               />
             }
+            disabled={disabled}
             sx={{
               m: noMargin ? 0 : undefined,
               color: !field.value ? "silver" : undefined,
