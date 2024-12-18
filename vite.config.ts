@@ -10,4 +10,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    outDir: "../kpn-assessment-be/dist/public/build",
+    emptyOutDir: true,
+  },
 });

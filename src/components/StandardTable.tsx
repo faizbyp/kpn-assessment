@@ -28,12 +28,14 @@ interface TableProps<T> {
   data: T[] | null;
   columns: ColumnDef<T>[];
   renderSubComponent?: (row: any) => ReactNode;
+  maxHeight?: number;
 }
 
 const StandardTable = memo(function StandardTable<T>({
   data,
   columns,
   renderSubComponent,
+  maxHeight,
 }: TableProps<T>) {
   const table = useReactTable({
     columns,
@@ -49,7 +51,7 @@ const StandardTable = memo(function StandardTable<T>({
         component={Paper}
         sx={{
           mb: 4,
-          maxHeight: 440,
+          maxHeight: maxHeight ? maxHeight : 440,
           // overflow: "scroll",
         }}
       >
@@ -83,7 +85,7 @@ const StandardTable = memo(function StandardTable<T>({
           <TableBody>
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
-                <TableRow>
+                <TableRow hover>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} align={cell.column.columnDef.meta?.align || "left"}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

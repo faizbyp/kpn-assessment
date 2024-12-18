@@ -6,6 +6,14 @@ interface TableSkeletonProps {
   small?: boolean;
 }
 
+export const BoxSkeleton = () => {
+  return (
+    <Box>
+      <Skeleton variant="rounded" width="100%" height={128} />
+    </Box>
+  );
+};
+
 export const ListSkeleton = () => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -28,6 +36,19 @@ export const POSkeleton = () => {
       <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
         <Skeleton variant="rounded" width="100%" height={64} />
         <Skeleton variant="rounded" width="100%" height={64} />
+      </Box>
+    </Box>
+  );
+};
+
+export const QuestionSkeleton = () => {
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Skeleton variant="rounded" width="100%" height={256} />
+      <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+        <Skeleton variant="rounded" width="100%" height={256} />
+        <Skeleton variant="rounded" width="100%" height={256} />
+        <Skeleton variant="rounded" width="100%" height={256} />
       </Box>
     </Box>
   );

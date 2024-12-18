@@ -1,9 +1,27 @@
-"use client";
-
 import { Checkbox, FormControlLabel, FormHelperText } from "@mui/material";
-import { Controller } from "react-hook-form";
+import { Controller, RegisterOptions } from "react-hook-form";
 
-const CheckboxCtrl = ({ name, control, label, rules, defaultValue, noMargin }) => {
+interface CheckboxProps {
+  name: string;
+  control: any;
+  label?: string;
+  rules?: RegisterOptions;
+  defaultValue?: string;
+  noMargin?: boolean;
+  color?: "error" | "primary" | "secondary" | "info" | "success" | "warning" | "default";
+  disabled?: boolean;
+}
+
+const CheckboxCtrl = ({
+  name,
+  control,
+  label,
+  rules,
+  defaultValue,
+  noMargin,
+  color,
+  disabled,
+}: CheckboxProps) => {
   return (
     <Controller
       name={name}
@@ -16,13 +34,15 @@ const CheckboxCtrl = ({ name, control, label, rules, defaultValue, noMargin }) =
             control={
               <Checkbox
                 {...field}
+                color={color}
                 checked={!!field.value}
                 onChange={(e) => field.onChange(e.target.checked)}
               />
             }
+            disabled={disabled}
             sx={{
-              m: noMargin && 0,
-              color: !field.value && "silver",
+              m: noMargin ? 0 : undefined,
+              color: !field.value ? "silver" : undefined,
             }}
             label={label}
           />

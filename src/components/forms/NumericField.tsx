@@ -1,9 +1,26 @@
-import { Controller, Control } from "react-hook-form";
+import { Controller, RegisterOptions } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { TextField, FormControl, FormHelperText, useTheme } from "@mui/material";
 import { useMemo } from "react";
 
-const HelperText = ({ message }) => {
+interface NumericProps {
+  name: string;
+  label: string;
+  control: any;
+  rules?: RegisterOptions;
+  readOnly?: boolean;
+  disabled?: boolean;
+  min?: number;
+  max?: number;
+  type?: string;
+  onChangeOvr?: (param: string) => void;
+  noMargin?: boolean;
+  decimalScale?: number;
+  allowNegative?: boolean;
+  maxLength?: number;
+}
+
+const HelperText = ({ message }: { message: string | undefined }) => {
   const theme = useTheme();
   const helperText = useMemo(() => {
     if (message !== undefined) {
@@ -25,7 +42,11 @@ export default function NumericFieldCtrl({
   max,
   type,
   onChangeOvr,
-}) {
+  noMargin,
+  decimalScale,
+  maxLength,
+  allowNegative = false,
+}: NumericProps) {
   return (
     <>
       <Controller
@@ -33,7 +54,7 @@ export default function NumericFieldCtrl({
         name={name}
         rules={rules}
         render={({ field: { onChange, value, ref }, fieldState: { error } }) => (
-          <FormControl fullWidth sx={{ mb: 2 }}>
+          <FormControl fullWidth sx={{ mb: noMargin ? 0 : 2 }}>
             <NumericFormat
               onChange={(e) => {
                 if (onChangeOvr !== undefined) {
@@ -47,7 +68,8 @@ export default function NumericFieldCtrl({
               customInput={TextField}
               error={!!error}
               fullWidth
-              allowNegative={false}
+              allowNegative={allowNegative}
+              decimalScale={decimalScale}
               slotProps={{
                 input: {
                   readOnly: readOnly,
@@ -57,6 +79,9 @@ export default function NumericFieldCtrl({
                     min: min,
                     max: max,
                   }),
+                },
+                htmlInput: {
+                  maxLength: maxLength,
                 },
               }}
             />
